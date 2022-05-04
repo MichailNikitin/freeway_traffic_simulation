@@ -1,11 +1,15 @@
 #include "graphics.h"
 
-#define WIDTH  800
+#define WIDTH  1100
 #define HEIGHT 600
 
-enum button_values { NONE = -1,
-                     GAME, ABOUT, EXIT,
-                     N_BUTTONS };
+enum button_menu { NONE = -1,
+                  GAME, ABOUT, EXIT
+                 };
+
+enum button_game {START=EXIT+1,
+                  PAUSA, BACK, N_BUTTONS
+                 };
 
 typedef struct Button
 {
@@ -16,7 +20,7 @@ typedef struct Button
    IMAGE *image;
 } Button;
 
-void create_button(int, int, int, const char*);
+void create_button(int, int, int, const char *);
 int  select_button();
 
 void load();
@@ -28,7 +32,7 @@ void close();
 
 Button buttons[N_BUTTONS];
 IMAGE *image_menu, *image_about;
-                     
+
 int main()
 {
    initwindow(WIDTH, HEIGHT);
@@ -39,14 +43,25 @@ int main()
    return 0;
 }
 
-void load()
+void load_menu()
 {
    image_menu  = loadBMP("window_menu.bmp");
    image_about = loadBMP("window_about.bmp");
-   
-   create_button(GAME,  300, 200, "button_game.bmp");
-   create_button(ABOUT, 300, 300, "button_about.bmp");
-   create_button(EXIT,  300, 400, "button_exit.bmp");
+
+   create_button(GAME,  WIDTH/2, 200, "button_game.bmp");
+   create_button(ABOUT, WIDTH/2, 300, "button_about.bmp");
+   create_button(EXIT,  WIDTH/2, 400, "button_exit.bmp");
+}
+
+void load_game()
+{
+   int x_start = WIDTH - (buttons[START].width - 20);
+   int x_pausa = WIDTH - (x_start + buttons[PAUSA].width + 20);
+   int x_back = WIDTH - (x_pausa + buttons[BACK].width + 20);
+   int y = 100;
+   create_button(START, x_start, HEIGHT - y, "button_start.bmp");
+   create_button(PAUSA, x_pausa, HEIGHT - y, "button_pausa.bmp");
+   create_button(BACK, x_back, HEIGHT - y, "button_back.bmp");
 }
 
 void start()
@@ -61,7 +76,7 @@ void start()
 void menu()
 {
    int state;
-   
+
    while (true)
    {
       putimage(0, 0, image_menu, COPY_PUT);
@@ -70,19 +85,25 @@ void menu()
          putimage(buttons[i].left, buttons[i].top,
                   buttons[i].image, COPY_PUT);
       }
-      
+
       state = NONE;
       while (state == NONE)
       {
          while (mousebuttons() != 1);
          state = select_button();
       }
-      
+
       switch (state)
       {
-         case GAME:  game();  break;
-         case ABOUT: about(); break;
-         case EXIT:  close(); return;
+      case GAME:
+         game();
+         break;
+      case ABOUT:
+         about();
+         break;
+      case EXIT:
+         close();
+         return;
       }
    }
 }
@@ -103,8 +124,7 @@ void close()
    }
 }
 
-void create_button(int i, int left, int top,
-                   const char *file_name)
+void create_button(int i, int left, int top, const char *file_name)
 {
    buttons[i].image  = loadBMP(file_name);
    buttons[i].left   = left;
@@ -116,26 +136,58 @@ void create_button(int i, int left, int top,
 int select_button()
 {
    int x, y;
-   
+
    x = mousex();
    y = mousey();
-   
+
    for (int i = 0; i < N_BUTTONS; i++)
    {
       if (x > buttons[i].left &&
-          x < buttons[i].left + buttons[i].width &&
-          y > buttons[i].top &&
-          y < buttons[i].top + buttons[i].height)
+            x < buttons[i].left + buttons[i].width &&
+            y > buttons[i].top &&
+            y < buttons[i].top + buttons[i].height)
       {
          return i;
       }
    }
-   
+
    return NONE;
 }
 
 void game()
 {
    cleardevice();
+   int state;
+
+   while (true)
+   {
+      putimage(0, 0, image_menu, COPY_PUT);
+      for (int i = EXIT; i < N_BUTTONS; i++)
+      {
+         putimage(buttons[i].left, buttons[i].top,
+                  buttons[i].image, COPY_PUT);
+      }
+
+      state = NONE;
+      while (state == NONE)
+      {
+         while (mousebuttons() != 1);
+         state = select_button();
+      }
+
+      switch (state)
+      {
+      case GAME:
+         game();
+         break;
+      case ABOUT:
+         about();
+         break;
+      case EXIT:
+         close();
+         return;
+      }
+   }
+
    getch();
 }
