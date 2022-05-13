@@ -1,0 +1,44 @@
+#
+!Animetion.cpp graphics.h keys_n_colors.h time.h #<#>
+!main.cpp graphics.h keys_n_colors.h #<#>
+Ball _type_ #<Animetion.cpp>
+Button _type_ #<main.cpp>
+COLOR_MAX #<Animetion.cpp>
+HEIGHT #<Animetion.cpp>
+WIDTH #<Animetion.cpp>
+about() -> void #<main.cpp>
+button_game : enum #<main.cpp>
+button_menu : enum #<main.cpp>
+buttons : Button[] #<main.cpp>
+close() -> void #<main.cpp>
+create_ball(int x, int y, int dx, int dy, int size, int color) -> Ball #<Animetion.cpp>
+create_ball(int, int, int, int, int, int) -> Ball #<Animetion.cpp>
+create_button(int i, int left, int top, const char* file_name) -> void #<main.cpp>
+create_button(int, int, int, const char*) -> void #<main.cpp>
+detect_balls(Ball* b, int n) -> void #<Animetion.cpp>
+detect_balls(Ball*, int) -> void #<Animetion.cpp>
+draw_ball(Ball b) -> void #<Animetion.cpp>
+draw_ball(Ball) -> void #<Animetion.cpp>
+game() -> void #<main.cpp>
+image_about : IMAGE* #<main.cpp>
+image_game : IMAGE* #<main.cpp>
+image_menu : IMAGE* #<main.cpp>
+load_game() -> void #<main.cpp>
+load_menu() -> void #<main.cpp>
+main() -> int #<Animetion.cpp>
+menu() -> void #<main.cpp>
+move_ball(Ball* b) -> void #<Animetion.cpp>
+move_ball(Ball*) -> void #<Animetion.cpp>
+select_button() -> int #<main.cpp>
+start() -> void #<main.cpp>
+	Ball::x : int #<Animetion.cpp>
+	Ball::y : int #<Animetion.cpp>
+	Ball::dx : int #<Animetion.cpp>
+	Ball::dy : int #<Animetion.cpp>
+	Ball::size : int #<Animetion.cpp>
+	Ball::color : int #<Animetion.cpp>
+	Button::left : int #<main.cpp>
+	Button::top : int #<main.cpp>
+	Button::width : int #<main.cpp>
+	Button::height : int #<main.cpp>
+	Button::image : IMAGE* #<main.cpp>
