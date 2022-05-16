@@ -5,11 +5,6 @@
 #define WIDTH 1200
 #define HEIDTH 800
 
-struct Car{
-   double v;
-   int x;
-};
-
 struct nk_canvas {
    struct nk_command_buffer *painter;
    struct nk_vec2 item_spacing;
@@ -59,9 +54,8 @@ void menu(struct nk_context *ctx, int *is_menu, int *is_about,int *is_model,int 
    if (nk_begin(ctx, "Меню", nk_rect(0, 0, WIDTH, HEIDTH),
                 NK_WINDOW_BORDER))
    {
-      nk_layout_row_dynamic(ctx, HEIDTH/4, 1);
+      nk_layout_row_static(ctx, WIDTH/16, HEIDTH/4, 4);
       nk_label(ctx, "Программа моделирования движения на автостраде", NK_TEXT_CENTERED);
-     nk_layout_row_static(ctx, WIDTH/2, HEIDTH/16, 1); 
       if (nk_button_label(ctx, "Моделирование")) {
          printf("button mod pressed\n");
          *is_model = 1;
@@ -107,33 +101,22 @@ void about(struct nk_context *ctx, int *is_menu, int *is_about,int *running) {
 
 void model(struct nk_context *ctx,struct nk_canvas canvas, int *is_menu,int *is_model,int *running) {
    int is_start = 0;
-   double MaxSpeed[1];
-   int SafeDist[1];
-   double Accel[1];
    int roadH = 100;
-   int roadW = WIDTH;
+               int roadW = WIDTH;
 
    {
-      canvas_begin(ctx, &canvas, 0, 0, 0, WIDTH, roadH+20, nk_rgb(250,20,20));
-      static int x = 0;
-      x=(x+1)%1000;
-      
-      nk_fill_rect(canvas.painter, nk_rect(0, 10, roadW,roadH), 1, nk_rgb(200, 200, 200));
-      
+
+      canvas_begin(ctx, &canvas, 0, 0, 0, WIDTH, roadH+10, nk_rgb(250,20,20));
+      nk_fill_rect(canvas.painter, nk_rect(10, 0, roadW,roadH), 1, nk_rgb(200, 200, 200));
       canvas_end(ctx, &canvas);
    }
 
-   if (nk_begin(ctx, "Парамметры модели", nk_rect(0, roadH+20, WIDTH, HEIDTH),
+   if (nk_begin(ctx, "Парамметры модели", nk_rect(0, 0, WIDTH, HEIDTH),
                 NK_WINDOW_BORDER))
    {
       nk_layout_row_dynamic(ctx, HEIDTH/16, 1);
       nk_label(ctx, "Введите значения значения параметров", NK_TEXT_CENTERED);
-      
-      //nk_layout_row_dynamic(ctx, HEIDTH/16, 1);
-      //nk_label(ctx, "Введите значения значения параметров", NK_TEXT_LEFT);
-      //nk_property_double(ctx,"максимальная скорость", 0.1, MaxSpeed, 10.0, 0.1); 
-      
-      nk_layout_row_dynamic(ctx, HEIDTH/16, 3);
+      nk_layout_row_dynamic(ctx, HEIDTH/16, 2);
       if (nk_button_label(ctx, "Начало")) {
          printf("button mod pressed\n");
          is_start = 0;

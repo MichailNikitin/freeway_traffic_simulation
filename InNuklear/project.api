@@ -2,6 +2,7 @@
 !nuklear.h sal.h stdarg.h stddef.h stdint.h #<#>
 !nuklear_internal.h assert.h limits.h stdarg.h stdio.h stdlib.h #<#>
 !test.c nuklear.h sal.h stdarg.h stddef.h stdint.h stdio.h string.h #<#>
+ struct@Car _type_ #<test.c>
  struct@nk_allocator _type_ #<nuklear.h>
  struct@nk_baked_font _type_ #<nuklear.h>
  struct@nk_buffer _type_ #<nuklear.h>
@@ -173,11 +174,14 @@ NK_UTF_SIZE #<nuklear.h>
 NK_VALUE_PAGE_CAPACITY #<nuklear.h>
 NK_VERTEX_LAYOUT_END #<nuklear.h>
 WIDTH #<test.c>
+about(struct nk_context* ctx, int* is_menu, int* is_about, int* running) -> void #<test.c>
 canvas_begin(struct nk_context* ctx, struct nk_canvas* canvas, nk_flags flags, int x, int y, int width, int height, struct nk_color background_color) -> void #<test.c>
 canvas_end(struct nk_context* ctx, struct nk_canvas* canvas) -> void #<test.c>
 enum :  #<nuklear.h>
 id : int #<nuklear.h>
 main(void) -> int #<test.c>
+menu(struct nk_context* ctx, int* is_menu, int* is_about, int* is_model, int* running) -> void #<test.c>
+model(struct nk_context* ctx, struct nk_canvas canvas, int* is_menu, int* is_model, int* running) -> void #<test.c>
 nk__begin(struct nk_context*) -> NK_API const struct nk_command* #<nuklear.h>
 nk__draw_begin(const struct nk_context*, const struct nk_buffer*) -> NK_API const struct nk_draw_command* #<nuklear.h>
 nk__draw_end(const struct nk_context*, const struct nk_buffer*) -> NK_API const struct nk_draw_command* #<nuklear.h>
@@ -967,6 +971,8 @@ nk_yellow : NK_GLOBAL const struct nk_color #<nuklear_internal.h>
 nk_zero(void* ptr, nk_size size) -> NK_LIB void #<nuklear_internal.h>
 nk_zero_struct(s) #<nuklear.h>
 ptr _type_ #<nuklear.h>
+	Car::v : double #<test.c>
+	Car::x : int #<test.c>
 	nk_allocator::userdata : nk_handle #<nuklear.h>
 	nk_allocator::alloc : nk_plugin_alloc #<nuklear.h>
 	nk_allocator::free : nk_plugin_free #<nuklear.h>
