@@ -116,7 +116,9 @@ void model(struct nk_context *ctx,struct nk_canvas canvas, int *is_menu,int *is_
    static double MaxSpeed = 5.0;
    static int SafeDist = 10;
    static double Accel = 2;
-   //
+   
+   struct Car cars[20];
+   struct Car run_cars[]
    int roadH = 100;
    int roadW = WIDTH;
 
@@ -127,6 +129,7 @@ void model(struct nk_context *ctx,struct nk_canvas canvas, int *is_menu,int *is_
       nk_fill_rect(canvas.painter, nk_rect(0, 10, roadW,roadH), 1, nk_rgb(200, 200, 200));
       /*_motion-cars_*/
       if (is_start){
+         
       motion_X = (int)(motion_X + MaxSpeed/20) % roadW;
       nk_stroke_line(canvas.painter, motion_X, roadH/2, motion_X+2, roadH/2, 5, nk_rgb(150,150,255));
       }
@@ -172,6 +175,7 @@ void model(struct nk_context *ctx,struct nk_canvas canvas, int *is_menu,int *is_
 
 }
 
+/*______window:Main______*/
 int main(void)
 {
    struct nk_canvas canvas;

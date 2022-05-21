@@ -16,10 +16,10 @@ struct nk_canvas {
    struct nk_vec2 panel_padding;
    struct nk_style_item window_background;
 };
-
+/*__________convas function___________*/
 static void
 canvas_begin(struct nk_context *ctx, struct nk_canvas *canvas, nk_flags flags,
-             int x, int y, int width, int height, struct nk_color background_color){
+             int x, int y, int width, int height, struct nk_color background_color) {
    /* save style properties which will be overwritten */
    canvas->panel_padding = ctx->style.window.padding;
    canvas->item_spacing = ctx->style.window.spacing;
@@ -45,7 +45,7 @@ canvas_begin(struct nk_context *ctx, struct nk_canvas *canvas, nk_flags flags,
 }
 
 static void
-canvas_end(struct nk_context *ctx, struct nk_canvas *canvas){
+canvas_end(struct nk_context *ctx, struct nk_canvas *canvas) {
    nk_end(ctx);
    ctx->style.window.spacing = canvas->panel_padding;
    ctx->style.window.padding = canvas->item_spacing;
@@ -53,6 +53,7 @@ canvas_end(struct nk_context *ctx, struct nk_canvas *canvas){
 }
 
 
+/*________window:Start-Menu__________*/
 void menu(struct nk_context *ctx, int *is_menu, int *is_about,int *is_model,int *running) {
    if (nk_begin(ctx, "Меню", nk_rect(0, 0, WIDTH, HEIDTH),
                 NK_WINDOW_BORDER))
@@ -81,6 +82,7 @@ void menu(struct nk_context *ctx, int *is_menu, int *is_about,int *is_model,int 
    nk_end(ctx);
 }
 
+/*______window:Program-description______*/
 void about(struct nk_context *ctx, int *is_menu, int *is_about,int *running) {
    if (nk_begin(ctx, "О программе", nk_rect(0, 0, WIDTH, HEIDTH),
                 NK_WINDOW_BORDER))
@@ -107,20 +109,24 @@ void about(struct nk_context *ctx, int *is_menu, int *is_about,int *running) {
 
 }
 
+/*______window:Modeling______*/
 void model(struct nk_context *ctx,struct nk_canvas canvas, int *is_menu,int *is_model,int *running) {
-   int is_start = 0;
-   
+   static int is_start = 0;
+
    static double MaxSpeed = 5.0;
    static int SafeDist = 10;
    static double Accel = 2;
-   // 
+   
+   struct Car cars[20];
+   
    int roadH = 100;
    int roadW = WIDTH;
 
-   static int motion_X = 0;
-   
+   static int motion_X = 10;
+   /*__drow-road&cars__*/
    {
       canvas_begin(ctx, &canvas, 0, 0, 0, WIDTH, roadH+20, nk_rgb(250,20,20));
       nk_fill_rect(canvas.painter, nk_rect(0, 10, roadW,roadH), 1, nk_rgb(200, 200, 200));
-      static int 
-      nk_stroke_line(_abracadabra_cast(canvas);
+      /*_motion-cars_*/
+      if (is_start){
+         for(int i = 0; _abracadabra_cast(*(cars[i]));
