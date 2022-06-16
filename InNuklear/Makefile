@@ -3,7 +3,7 @@
 TARGET = release
 
 CSOURCES = $(wildcard *.c)
-CPPSOURCES = $(filter-out %_unittest.cpp %_featuretest.cpp,$(wildcard *.cpp))
+CPPSOURCES = $(filter-out %_unittest.cpp,$(wildcard *.cpp))
 
 SMSOURCES = $(wildcard statemachine*.uxf)
 SMGENERH = $(patsubst %.uxf,$(TARGET)/%.hpp,$(SMSOURCES))
@@ -41,7 +41,7 @@ else
 CCFLAGS = -O1  
 endif
 GCC = gcc -std=c11
-GPP = g++ -std=c++20
+GPP = g++ -std=c++17
 LFLAGS = -Wl,--stack,83886080 -static
 CPPLIBS =  conio2 nuklear bgi gdi32 msimg32 comdlg32 uuid oleaut32 ole32 reflex
 CLIBS =  conio2 nuklear gdi32 msimg32
@@ -55,10 +55,9 @@ LIBS = $(CLIBS)
 OBJS = $(sort $(patsubst %.c,$(TARGET)/%.o,$(CSOURCES)))
 endif
 
-CCCS = -finput-charset=utf-8 -fexec-charset=windows-1251
-CCCW = -finput-charset=windows-1251 -fexec-charset=windows-1251
+CCCS = -finput-charset=windows-1251 -fexec-charset=windows-1251
 HS = $(sort $(CHEADERS) $(GRMHEADER) $(CAIOGENERH) $(SMGENERH))
-INIT="C:\Users\Пользователь\Downloads\MinIDE\SciTE/../lib/initansicp.o"
+INIT="C:\Program Files (x86)\MinIDE\SciTE/../lib/initansicp.o"
 
 .PHONY : all clean
 
@@ -91,13 +90,13 @@ $(TARGET)/%.cpp $(TARGET)/%.hpp $(TARGET)/%.lex.cpp $(TARGET)/%.grm.cpp: %.caio
 	ifexist.cmd $(TARGET)/$(patsubst %.caio,%.grm,$<) "bison -Wno-other -o$(TARGET)/$(patsubst %.caio,%.grm.cpp,$<) $(TARGET)/$(patsubst %.caio,%.grm,$<)" "echo // >$(TARGET)/$(patsubst %.caio,%.grm.cpp,$<)"
 
 $(TARGET)/%.o: %.cpp $(CPPHEADERS) $(HS)
-	$(GPP) $(CCFLAGS) $(if $(filter uc%,$<),$(CCCS),$(CCCW)) -o $@ -I. -I$(TARGET) -c $<
+	$(GPP) $(CCFLAGS) $(if $(filter uc%,$<),$(CCCS),) -o $@ -I. -I$(TARGET) -c $<
 
 $(TARGET)/%.o: $(TARGET)/%.cpp $(CPPHEADERS) $(HS)
-	$(GPP) $(CCFLAGS) $(if $(filter uc%,$<),$(CCCS),$(CCCW)) -o $@ -I. -I$(TARGET) -c $<
+	$(GPP) $(CCFLAGS) $(if $(filter uc%,$<),$(CCCS),) -o $@ -I. -I$(TARGET) -c $<
 
 $(TARGET)/%.o: %.c $(HS)
-	$(GCC) $(CCFLAGS) $(if $(filter uc%,$<),$(CCCS),$(CCCW)) -o $@ -I. -I$(TARGET) -c $<
+	$(GCC) $(CCFLAGS) $(if $(filter uc%,$<),$(CCCS),) -o $@ -I. -I$(TARGET) -c $<
 
 $(TARGET)/_all_.exe: $(OBJS) Makefile
 	$(CC) $(CCFLAGS) $(LFLAGS) -o $(TARGET)/_all_ $(OBJS) $(INIT) $(addprefix -l,$(LIBS))
@@ -105,12 +104,12 @@ $(TARGET)/_all_.exe: $(OBJS) Makefile
 $(TARGET)/%.exe: %.lex Makefile
 	$(if $(wildcard $(TARGET)),,mkdir $(TARGET))
 	reflex --flex --bison -o$(TARGET)/lex.yy.cpp $<
-	$(GPP) $(CCFLAGS) $(LFLAGS) $(if $(filter uc%,$<),$(CCCS),$(CCCW)) -o $(TARGET)/$(patsubst %.lex,%,$<) -I. -I$(TARGET) $(TARGET)/lex.yy.cpp $(INIT) $(addprefix -l,$(CPPLIBS))
+	$(GPP) $(CCFLAGS) $(LFLAGS) $(if $(filter uc%,$<),$(CCCS),) -o $(TARGET)/$(patsubst %.lex,%,$<) -I. -I$(TARGET) $(TARGET)/lex.yy.cpp $(INIT) $(addprefix -l,$(CPPLIBS))
 
 $(TARGET)/%.exe: %.grm Makefile
 	$(if $(wildcard $(TARGET)),,mkdir $(TARGET))
 	bison -o$(TARGET)/y.tab.cpp $<
-	$(GPP) $(CCFLAGS) $(LFLAGS) $(if $(filter uc%,$<),$(CCCS),$(CCCW)) -o $(TARGET)/$(patsubst %.grm,%,$<) -I. -I$(TARGET) $(TARGET)/y.tab.cpp $(INIT) $(addprefix -l,$(CPPLIBS))
+	$(GPP) $(CCFLAGS) $(LFLAGS) $(if $(filter uc%,$<),$(CCCS),) -o $(TARGET)/$(patsubst %.grm,%,$<) -I. -I$(TARGET) $(TARGET)/y.tab.cpp $(INIT) $(addprefix -l,$(CPPLIBS))
 
 $(TARGET)/%.exe: %.caio Makefile
 	$(if $(wildcard $(TARGET)),,mkdir $(TARGET))
@@ -121,11 +120,11 @@ $(TARGET)/%.exe: %.caio Makefile
 
 $(TARGET)/%.exe: %.c Makefile
 	$(if $(wildcard $(TARGET)),,mkdir $(TARGET))
-	$(GCC) $(CCFLAGS) $(LFLAGS) $(if $(filter uc%,$<),$(CCCS),$(CCCW)) -o $(TARGET)/$(patsubst %.c,%,$<) -I. -I$(TARGET) $< $(INIT) $(addprefix -l,$(CLIBS))
+	$(GCC) $(CCFLAGS) $(LFLAGS) $(if $(filter uc%,$<),$(CCCS),) -o $(TARGET)/$(patsubst %.c,%,$<) -I. -I$(TARGET) $< $(INIT) $(addprefix -l,$(CLIBS))
 
 $(TARGET)/%.exe: %.cpp Makefile
 	$(if $(wildcard $(TARGET)),,mkdir $(TARGET))
-	$(GPP) $(CCFLAGS) $(LFLAGS) $(if $(filter uc%,$<),$(CCCS),$(CCCW)) -o $(TARGET)/$(patsubst %.cpp,%,$<) -I. -I$(TARGET) $< $(INIT) $(addprefix -l,$(CPPLIBS))
+	$(GPP) $(CCFLAGS) $(LFLAGS) $(if $(filter uc%,$<),$(CCCS),) -o $(TARGET)/$(patsubst %.cpp,%,$<) -I. -I$(TARGET) $< $(INIT) $(addprefix -l,$(CPPLIBS))
 
 clean:
 	$(if $(wildcard release),rmdir /q /s release)

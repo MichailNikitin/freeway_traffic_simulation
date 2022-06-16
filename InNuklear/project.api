@@ -1,9 +1,9 @@
-# nuklear.h nuklear_internal.h
-!main.c nuklear.h sal.h stdarg.h stddef.h stdint.h stdio.h string.h #<#>
+# MyNuklear.h nuklear.h
+!main.c MyNuklear.h nuklear.h sal.h stdarg.h stddef.h stdint.h stdio.h string.h time.h windows.h #<#>
 !nuklear.h sal.h stdarg.h stddef.h stdint.h #<#>
-!nuklear_internal.h assert.h limits.h stdarg.h stdio.h stdlib.h #<#>
-!test.c nuklear.h sal.h stdarg.h stddef.h stdint.h stdio.h string.h #<#>
+!nuklear_gdi.c MyNuklear.h limits.h malloc.h nuklear.h sal.h stdarg.h stddef.h stdint.h stdlib.h windows.h #<#>
  struct@Car _type_ #<main.c>
+ struct@GdiFont _type_ #<nuklear_gdi.c>
  struct@nk_allocator _type_ #<nuklear.h>
  struct@nk_baked_font _type_ #<nuklear.h>
  struct@nk_buffer _type_ #<nuklear.h>
@@ -64,7 +64,6 @@
  struct@nk_popup_buffer _type_ #<nuklear.h>
  struct@nk_popup_state _type_ #<nuklear.h>
  struct@nk_property_state _type_ #<nuklear.h>
- struct@nk_property_variant _type_ #<nuklear_internal.h>
  struct@nk_rect _type_ #<nuklear.h>
  struct@nk_recti _type_ #<nuklear.h>
  struct@nk_row_layout _type_ #<nuklear.h>
@@ -87,7 +86,6 @@
  struct@nk_style_window _type_ #<nuklear.h>
  struct@nk_style_window_header _type_ #<nuklear.h>
  struct@nk_table _type_ #<nuklear.h>
- struct@nk_text _type_ #<nuklear_internal.h>
  struct@nk_text_edit _type_ #<nuklear.h>
  struct@nk_text_undo_record _type_ #<nuklear.h>
  struct@nk_text_undo_state _type_ #<nuklear.h>
@@ -96,13 +94,19 @@
  struct@nk_vec2 _type_ #<nuklear.h>
  struct@nk_vec2i _type_ #<nuklear.h>
  struct@nk_window _type_ #<nuklear.h>
+ struct@traffic _type_ #<main.c>
+CarsCount : int #<main.c>
+Collision : int #<main.c>
+FreeSpaceInStart : int #<main.c>
+GdiFont _type_ #<nuklear_gdi.c>
 HEIDTH #<main.c>
+HEIDTH_BUTTON #<main.c>
+HEIDTH_TEXT #<main.c>
 NK_ABS(a) #<nuklear.h>
 NK_ALIGNOF(t) #<nuklear.h>
 NK_ALIGN_PTR(x, mask) #<nuklear.h>
 NK_ALIGN_PTR_BACK(x, mask) #<nuklear.h>
 NK_API #<nuklear.h>
-NK_ASSERT(expr) #<nuklear_internal.h>
 NK_BETWEEN(x, a, b) #<nuklear.h>
 NK_CLAMP(i,v,x) #<nuklear.h>
 NK_CONFIGURATION_STACK_TYPE :  #<nuklear.h>
@@ -117,10 +121,8 @@ NK_CONFIG_STACK(float, NK_FLOAT_STACK_SIZE) #<nuklear.h>
 NK_CONFIG_STACK(type,size) #<nuklear.h>
 NK_CONTAINER_OF(ptr,type,member) #<nuklear.h>
 NK_CONTAINS(x, y, w, h, bx, by, bw, bh) #<nuklear.h>
-NK_DEFAULT #<nuklear_internal.h>
 NK_FILE_LINE #<nuklear.h>
 NK_FLAG(x) #<nuklear.h>
-NK_FLOAT_PRECISION #<nuklear_internal.h>
 NK_GLOBAL #<nuklear.h>
 NK_INBOX(px, py, x, y, w, h) #<nuklear.h>
 NK_INCLUDE_DEFAULT_ALLOCATOR #<nuklear.h>
@@ -144,13 +146,7 @@ NK_PRINTF_FORMAT_STRING #<nuklear.h>
 NK_PRINTF_VALIST_FUNC(fmtargnumber) #<nuklear.h>
 NK_PRINTF_VARARG_FUNC(fmtargnumber) #<nuklear.h>
 NK_SATURATE(x) #<nuklear.h>
-NK_SCHAR_MAX #<nuklear_internal.h>
-NK_SCHAR_MIN #<nuklear_internal.h>
-NK_SINT_MAX #<nuklear_internal.h>
-NK_SINT_MIN #<nuklear_internal.h>
 NK_SIZE_TYPE #<nuklear.h>
-NK_SSHORT_MAX #<nuklear_internal.h>
-NK_SSHORT_MIN #<nuklear_internal.h>
 NK_STATIC_ASSERT :  #<nuklear.h>
 NK_STATIC_ASSERT(exp) #<nuklear.h>
 NK_STORAGE #<nuklear.h>
@@ -158,31 +154,36 @@ NK_STRINGIFY(x) #<nuklear.h>
 NK_STRING_JOIN(arg1, arg2) #<nuklear.h>
 NK_STRING_JOIN_DELAY(arg1, arg2) #<nuklear.h>
 NK_STRING_JOIN_IMMEDIATE(arg1, arg2) #<nuklear.h>
-NK_UCHAR_MAX #<nuklear_internal.h>
-NK_UCHAR_MIN #<nuklear_internal.h>
 NK_UINT16 #<nuklear.h>
 NK_UINT32 #<nuklear.h>
 NK_UINT8 #<nuklear.h>
-NK_UINT_MAX #<nuklear_internal.h>
-NK_UINT_MIN #<nuklear_internal.h>
 NK_UNDEFINED #<nuklear.h>
 NK_UNIQUE_NAME(name) #<nuklear.h>
 NK_UNUSED(x) #<nuklear.h>
-NK_USHORT_MAX #<nuklear_internal.h>
-NK_USHORT_MIN #<nuklear_internal.h>
 NK_UTF_INVALID #<nuklear.h>
 NK_UTF_SIZE #<nuklear.h>
 NK_VALUE_PAGE_CAPACITY #<nuklear.h>
 NK_VERTEX_LAYOUT_END #<nuklear.h>
 WIDTH #<main.c>
-about(struct nk_context* ctx, int* is_menu, int* is_about, int* running) -> void #<main.c>
+WIDTH_BUTTON #<main.c>
+WIN32_LEAN_AND_MEAN #<nuklear_gdi.c>
+WindowProc(HWND wnd, UINT msg, WPARAM wparam, LPARAM lparam) -> LRESULT CALLBACK #<nuklear_gdi.c>
+about() -> void #<main.c>
+canvas : struct nk_canvas #<main.c>
 canvas_begin(struct nk_context* ctx, struct nk_canvas* canvas, nk_flags flags, int x, int y, int width, int height, struct nk_color background_color) -> void #<main.c>
 canvas_end(struct nk_context* ctx, struct nk_canvas* canvas) -> void #<main.c>
+cars : Car[] #<main.c>
+convert_color(struct nk_color c) -> COLORREF #<nuklear_gdi.c>
+ctx : struct nk_context* #<main.c>
 enum :  #<nuklear.h>
+gdi : struct gdi_param #<nuklear_gdi.c>
+gdi_param : struct #<MyNuklear.h>
+gdifont : GdiFont* #<nuklear_gdi.c>
 id : int #<nuklear.h>
 main(void) -> int #<main.c>
-menu(struct nk_context* ctx, int* is_menu, int* is_about, int* is_model, int* running) -> void #<main.c>
-model(struct nk_context* ctx, struct nk_canvas canvas, int* is_menu, int* is_model, int* running) -> void #<main.c>
+menu() -> void #<main.c>
+model() -> void #<main.c>
+nk_MyGdi_dispatch() -> void #<main.c>
 nk__begin(struct nk_context*) -> NK_API const struct nk_command* #<nuklear.h>
 nk__draw_begin(const struct nk_context*, const struct nk_buffer*) -> NK_API const struct nk_draw_command* #<nuklear.h>
 nk__draw_end(const struct nk_context*, const struct nk_buffer*) -> NK_API const struct nk_draw_command* #<nuklear.h>
@@ -191,17 +192,12 @@ nk__draw_list_end(const struct nk_draw_list*, const struct nk_buffer*) -> NK_API
 nk__draw_list_next(const struct nk_draw_command*, const struct nk_buffer*, const struct nk_draw_list*) -> NK_API const struct nk_draw_command* #<nuklear.h>
 nk__draw_next(const struct nk_draw_command*, const struct nk_buffer*, const struct nk_context*) -> NK_API const struct nk_draw_command* #<nuklear.h>
 nk__next(struct nk_context*, const struct nk_command*) -> NK_API const struct nk_command* #<nuklear.h>
-nk_add_value(struct nk_context* ctx, struct nk_window* win, nk_hash name, nk_uint value) -> NK_LIB nk_uint* #<nuklear_internal.h>
 nk_allocation_type : enum #<nuklear.h>
 nk_allocator : struct #<nuklear.h>
 nk_anti_aliasing : enum #<nuklear.h>
 nk_begin(struct nk_context* ctx, const char* title, struct nk_rect bounds, nk_flags flags) -> NK_API int #<nuklear.h>
 nk_begin_titled(struct nk_context* ctx, const char* name, const char* title, struct nk_rect bounds, nk_flags flags) -> NK_API int #<nuklear.h>
-nk_black : NK_GLOBAL const struct nk_color #<nuklear_internal.h>
-nk_blue : NK_GLOBAL const struct nk_color #<nuklear_internal.h>
 nk_buffer : struct #<nuklear.h>
-nk_buffer_align(void* unaligned, nk_size align, nk_size* alignment, enum nk_buffer_allocation_type type) -> NK_LIB void* #<nuklear_internal.h>
-nk_buffer_alloc(struct nk_buffer* b, enum nk_buffer_allocation_type type, nk_size size, nk_size align) -> NK_LIB void* #<nuklear_internal.h>
 nk_buffer_allocation_type : enum #<nuklear.h>
 nk_buffer_clear(struct nk_buffer*) -> NK_API void #<nuklear.h>
 nk_buffer_free(struct nk_buffer*) -> NK_API void #<nuklear.h>
@@ -213,12 +209,9 @@ nk_buffer_mark(struct nk_buffer*, enum nk_buffer_allocation_type type) -> NK_API
 nk_buffer_memory(struct nk_buffer*) -> NK_API void* #<nuklear.h>
 nk_buffer_memory_const(const struct nk_buffer*) -> NK_API const void* #<nuklear.h>
 nk_buffer_push(struct nk_buffer*, enum nk_buffer_allocation_type type, const void* memory, nk_size size, nk_size align) -> NK_API void #<nuklear.h>
-nk_buffer_realloc(struct nk_buffer* b, nk_size capacity, nk_size* size) -> NK_LIB void* #<nuklear_internal.h>
 nk_buffer_reset(struct nk_buffer*, enum nk_buffer_allocation_type type) -> NK_API void #<nuklear.h>
 nk_buffer_total(struct nk_buffer*) -> NK_API nk_size #<nuklear.h>
-nk_build(struct nk_context* ctx) -> NK_LIB void #<nuklear_internal.h>
 nk_button_behavior : enum #<nuklear.h>
-nk_button_behavior(nk_flags* state, struct nk_rect r, const struct nk_input* i, enum nk_button_behavior behavior) -> NK_LIB int #<nuklear_internal.h>
 nk_button_color(struct nk_context*, struct nk_color) -> NK_API int #<nuklear.h>
 nk_button_image(struct nk_context*, struct nk_image img) -> NK_API int #<nuklear.h>
 nk_button_image_label(struct nk_context*, struct nk_image img, const char*, nk_flags text_alignment) -> NK_API int #<nuklear.h>
@@ -283,7 +276,6 @@ nk_color_hsva_i(int* h, int* s, int* v, int* a, struct nk_color) -> NK_API void 
 nk_color_hsva_iv(int* hsva_out, struct nk_color) -> NK_API void #<nuklear.h>
 nk_color_pick(struct nk_context*, struct nk_colorf*, enum nk_color_format) -> NK_API int #<nuklear.h>
 nk_color_picker(struct nk_context*, struct nk_colorf, enum nk_color_format) -> NK_API struct nk_colorf #<nuklear.h>
-nk_color_picker_behavior(nk_flags* state, const struct nk_rect* bounds, const struct nk_rect* matrix, const struct nk_rect* hue_bar, const struct nk_rect* alpha_bar, struct nk_colorf* color, const struct nk_input* in) -> NK_LIB int #<nuklear_internal.h>
 nk_color_u32(struct nk_color) -> NK_API nk_uint #<nuklear.h>
 nk_colorf_hsva_f(float* out_h, float* out_s, float* out_v, float* out_a, struct nk_colorf in) -> NK_API void #<nuklear.h>
 nk_colorf_hsva_fv(float* hsva, struct nk_colorf in) -> NK_API void #<nuklear.h>
@@ -313,9 +305,6 @@ nk_combobox_callback(struct nk_context*, void(* item_getter)(void*, int, const c
 nk_combobox_separator(struct nk_context*, const char* items_separated_by_separator, int separator, int* selected, int count, int item_height, struct nk_vec2 size) -> NK_API void #<nuklear.h>
 nk_combobox_string(struct nk_context*, const char* items_separated_by_zeros, int* selected, int count, int item_height, struct nk_vec2 size) -> NK_API void #<nuklear.h>
 nk_command_buffer : struct #<nuklear.h>
-nk_command_buffer_init(struct nk_command_buffer* cb, struct nk_buffer* b, enum nk_command_clipping clip) -> NK_LIB void #<nuklear_internal.h>
-nk_command_buffer_push(struct nk_command_buffer* b, enum nk_command_type t, nk_size size) -> NK_LIB void* #<nuklear_internal.h>
-nk_command_buffer_reset(struct nk_command_buffer* b) -> NK_LIB void #<nuklear_internal.h>
 nk_command_clipping : enum #<nuklear.h>
 nk_command_custom_callback _type_ #<nuklear.h>
 nk_command_type : enum #<nuklear.h>
@@ -332,36 +321,8 @@ nk_contextual_item_text(struct nk_context*, const char*, int, nk_flags align) ->
 nk_convert(struct nk_context*, struct nk_buffer* cmds, struct nk_buffer* vertices, struct nk_buffer* elements, const struct nk_convert_config*) -> NK_API nk_flags #<nuklear.h>
 nk_convert_config : struct #<nuklear.h>
 nk_convert_result : enum #<nuklear.h>
-nk_cos(float x) -> NK_LIB float #<nuklear_internal.h>
-nk_create_page_element(struct nk_context* ctx) -> NK_LIB struct nk_page_element* #<nuklear_internal.h>
-nk_create_panel(struct nk_context* ctx) -> NK_LIB void* #<nuklear_internal.h>
-nk_create_table(struct nk_context* ctx) -> NK_LIB struct nk_table* #<nuklear_internal.h>
-nk_create_window(struct nk_context* ctx) -> NK_LIB void* #<nuklear_internal.h>
-nk_do_button(nk_flags* state, struct nk_command_buffer* out, struct nk_rect r, const struct nk_style_button* style, const struct nk_input* in, enum nk_button_behavior behavior, struct nk_rect* content) -> NK_LIB int #<nuklear_internal.h>
-nk_do_button_image(nk_flags* state, struct nk_command_buffer* out, struct nk_rect bounds, struct nk_image img, enum nk_button_behavior b, const struct nk_style_button* style, const struct nk_input* in) -> NK_LIB int #<nuklear_internal.h>
-nk_do_button_symbol(nk_flags* state, struct nk_command_buffer* out, struct nk_rect bounds, enum nk_symbol_type symbol, enum nk_button_behavior behavior, const struct nk_style_button* style, const struct nk_input* in, const struct nk_user_font* font) -> NK_LIB int #<nuklear_internal.h>
-nk_do_button_text(nk_flags* state, struct nk_command_buffer* out, struct nk_rect bounds, const char* string, int len, nk_flags align, enum nk_button_behavior behavior, const struct nk_style_button* style, const struct nk_input* in, const struct nk_user_font* font) -> NK_LIB int #<nuklear_internal.h>
-nk_do_button_text_image(nk_flags* state, struct nk_command_buffer* out, struct nk_rect bounds, struct nk_image img, const char* str, int len, nk_flags align, enum nk_button_behavior behavior, const struct nk_style_button* style, const struct nk_user_font* font, const struct nk_input* in) -> NK_LIB int #<nuklear_internal.h>
-nk_do_button_text_symbol(nk_flags* state, struct nk_command_buffer* out, struct nk_rect bounds, enum nk_symbol_type symbol, const char* str, int len, nk_flags align, enum nk_button_behavior behavior, const struct nk_style_button* style, const struct nk_user_font* font, const struct nk_input* in) -> NK_LIB int #<nuklear_internal.h>
-nk_do_color_picker(nk_flags* state, struct nk_command_buffer* out, struct nk_colorf* col, enum nk_color_format fmt, struct nk_rect bounds, struct nk_vec2 padding, const struct nk_input* in, const struct nk_user_font* font) -> NK_LIB int #<nuklear_internal.h>
-nk_do_edit(nk_flags* state, struct nk_command_buffer* out, struct nk_rect bounds, nk_flags flags, nk_plugin_filter filter, struct nk_text_edit* edit, const struct nk_style_edit* style, struct nk_input* in, const struct nk_user_font* font) -> NK_LIB nk_flags #<nuklear_internal.h>
-nk_do_progress(nk_flags* state, struct nk_command_buffer* out, struct nk_rect bounds, nk_size value, nk_size max, int modifiable, const struct nk_style_progress* style, struct nk_input* in) -> NK_LIB nk_size #<nuklear_internal.h>
-nk_do_property(nk_flags* ws, struct nk_command_buffer* out, struct nk_rect property, const char* name, struct nk_property_variant* variant, float inc_per_pixel, char* buffer, int* len, int* state, int* cursor, int* select_begin, int* select_end, const struct nk_style_property* style, enum nk_property_filter filter, struct nk_input* in, const struct nk_user_font* font, struct nk_text_edit* text_edit, enum nk_button_behavior behavior) -> NK_LIB void #<nuklear_internal.h>
-nk_do_scrollbarh(nk_flags* state, struct nk_command_buffer* out, struct nk_rect scroll, int has_scrolling, float offset, float target, float step, float button_pixel_inc, const struct nk_style_scrollbar* style, struct nk_input* in, const struct nk_user_font* font) -> NK_LIB float #<nuklear_internal.h>
-nk_do_scrollbarv(nk_flags* state, struct nk_command_buffer* out, struct nk_rect scroll, int has_scrolling, float offset, float target, float step, float button_pixel_inc, const struct nk_style_scrollbar* style, struct nk_input* in, const struct nk_user_font* font) -> NK_LIB float #<nuklear_internal.h>
-nk_do_selectable(nk_flags* state, struct nk_command_buffer* out, struct nk_rect bounds, const char* str, int len, nk_flags align, int* value, const struct nk_style_selectable* style, const struct nk_input* in, const struct nk_user_font* font) -> NK_LIB int #<nuklear_internal.h>
-nk_do_selectable_image(nk_flags* state, struct nk_command_buffer* out, struct nk_rect bounds, const char* str, int len, nk_flags align, int* value, const struct nk_image* img, const struct nk_style_selectable* style, const struct nk_input* in, const struct nk_user_font* font) -> NK_LIB int #<nuklear_internal.h>
-nk_do_slider(nk_flags* state, struct nk_command_buffer* out, struct nk_rect bounds, float min, float val, float max, float step, const struct nk_style_slider* style, struct nk_input* in, const struct nk_user_font* font) -> NK_LIB float #<nuklear_internal.h>
-nk_do_toggle(nk_flags* state, struct nk_command_buffer* out, struct nk_rect r, int* active, const char* str, int len, enum nk_toggle_type type, const struct nk_style_toggle* style, const struct nk_input* in, const struct nk_user_font* font) -> NK_LIB int #<nuklear_internal.h>
-nk_drag_behavior(nk_flags* state, const struct nk_input* in, struct nk_rect drag, struct nk_property_variant* variant, float inc_per_pixel) -> NK_LIB void #<nuklear_internal.h>
-nk_draw_button(struct nk_command_buffer* out, const struct nk_rect* bounds, nk_flags state, const struct nk_style_button* style) -> NK_LIB const struct nk_style_item* #<nuklear_internal.h>
-nk_draw_button_image(struct nk_command_buffer* out, const struct nk_rect* bounds, const struct nk_rect* content, nk_flags state, const struct nk_style_button* style, const struct nk_image* img) -> NK_LIB void #<nuklear_internal.h>
-nk_draw_button_symbol(struct nk_command_buffer* out, const struct nk_rect* bounds, const struct nk_rect* content, nk_flags state, const struct nk_style_button* style, enum nk_symbol_type type, const struct nk_user_font* font) -> NK_LIB void #<nuklear_internal.h>
-nk_draw_button_text(struct nk_command_buffer* out, const struct nk_rect* bounds, const struct nk_rect* content, nk_flags state, const struct nk_style_button* style, const char* txt, int len, nk_flags text_alignment, const struct nk_user_font* font) -> NK_LIB void #<nuklear_internal.h>
-nk_draw_button_text_image(struct nk_command_buffer* out, const struct nk_rect* bounds, const struct nk_rect* label, const struct nk_rect* image, nk_flags state, const struct nk_style_button* style, const char* str, int len, const struct nk_user_font* font, const struct nk_image* img) -> NK_LIB void #<nuklear_internal.h>
-nk_draw_button_text_symbol(struct nk_command_buffer* out, const struct nk_rect* bounds, const struct nk_rect* label, const struct nk_rect* symbol, nk_flags state, const struct nk_style_button* style, const char* str, int len, enum nk_symbol_type type, const struct nk_user_font* font) -> NK_LIB void #<nuklear_internal.h>
-nk_draw_checkbox(struct nk_command_buffer* out, nk_flags state, const struct nk_style_toggle* style, int active, const struct nk_rect* label, const struct nk_rect* selector, const struct nk_rect* cursors, const char* string, int len, const struct nk_user_font* font) -> NK_LIB void #<nuklear_internal.h>
-nk_draw_color_picker(struct nk_command_buffer* o, const struct nk_rect* matrix, const struct nk_rect* hue_bar, const struct nk_rect* alpha_bar, struct nk_colorf col) -> NK_LIB void #<nuklear_internal.h>
+nk_create_image(struct nk_image* image, const char* frame_buffer, const int width, const int height) -> void #<nuklear_gdi.c>
+nk_delete_image(struct nk_image* image) -> void #<nuklear_gdi.c>
 nk_draw_command : struct #<nuklear.h>
 nk_draw_foreach(cmd,ctx, b) #<nuklear.h>
 nk_draw_image(struct nk_command_buffer*, struct nk_rect, const struct nk_image*, struct nk_color) -> NK_API void #<nuklear.h>
@@ -393,20 +354,11 @@ nk_draw_list_stroke_line(struct nk_draw_list*, struct nk_vec2 a, struct nk_vec2 
 nk_draw_list_stroke_poly_line(struct nk_draw_list*, const struct nk_vec2* pnts, const unsigned int cnt, struct nk_color, enum nk_draw_list_stroke, float thickness, enum nk_anti_aliasing) -> NK_API void #<nuklear.h>
 nk_draw_list_stroke_rect(struct nk_draw_list*, struct nk_rect rect, struct nk_color, float rounding, float thickness) -> NK_API void #<nuklear.h>
 nk_draw_list_stroke_triangle(struct nk_draw_list*, struct nk_vec2 a, struct nk_vec2 b, struct nk_vec2 c, struct nk_color, float thickness) -> NK_API void #<nuklear.h>
-nk_draw_option(struct nk_command_buffer* out, nk_flags state, const struct nk_style_toggle* style, int active, const struct nk_rect* label, const struct nk_rect* selector, const struct nk_rect* cursors, const char* string, int len, const struct nk_user_font* font) -> NK_LIB void #<nuklear_internal.h>
-nk_draw_progress(struct nk_command_buffer* out, nk_flags state, const struct nk_style_progress* style, const struct nk_rect* bounds, const struct nk_rect* scursor, nk_size value, nk_size max) -> NK_LIB void #<nuklear_internal.h>
-nk_draw_property(struct nk_command_buffer* out, const struct nk_style_property* style, const struct nk_rect* bounds, const struct nk_rect* label, nk_flags state, const char* name, int len, const struct nk_user_font* font) -> NK_LIB void #<nuklear_internal.h>
-nk_draw_scrollbar(struct nk_command_buffer* out, nk_flags state, const struct nk_style_scrollbar* style, const struct nk_rect* bounds, const struct nk_rect* scroll) -> NK_LIB void #<nuklear_internal.h>
-nk_draw_selectable(struct nk_command_buffer* out, nk_flags state, const struct nk_style_selectable* style, int active, const struct nk_rect* bounds, const struct nk_rect* icon, const struct nk_image* img, enum nk_symbol_type sym, const char* string, int len, nk_flags align, const struct nk_user_font* font) -> NK_LIB void #<nuklear_internal.h>
-nk_draw_slider(struct nk_command_buffer* out, nk_flags state, const struct nk_style_slider* style, const struct nk_rect* bounds, const struct nk_rect* visual_cursor, float min, float value, float max) -> NK_LIB void #<nuklear_internal.h>
-nk_draw_symbol(struct nk_command_buffer* out, enum nk_symbol_type type, struct nk_rect content, struct nk_color background, struct nk_color foreground, float border_width, const struct nk_user_font* font) -> NK_LIB void #<nuklear_internal.h>
 nk_draw_text(struct nk_command_buffer*, struct nk_rect, const char* text, int len, const struct nk_user_font*, struct nk_color, struct nk_color) -> NK_API void #<nuklear.h>
 nk_draw_vertex_layout_attribute : enum #<nuklear.h>
 nk_draw_vertex_layout_element : struct #<nuklear.h>
 nk_draw_vertex_layout_format : enum #<nuklear.h>
-nk_dtoa(char* s, double n) -> NK_LIB char* #<nuklear_internal.h>
 nk_edit_buffer(struct nk_context*, nk_flags, struct nk_text_edit*, nk_plugin_filter) -> NK_API nk_flags #<nuklear.h>
-nk_edit_draw_text(struct nk_command_buffer* out, const struct nk_style_edit* style, float pos_x, float pos_y, float x_offset, const char* text, int byte_len, float row_height, const struct nk_user_font* font, struct nk_color background, struct nk_color foreground, int is_selected) -> NK_LIB void #<nuklear_internal.h>
 nk_edit_events : enum #<nuklear.h>
 nk_edit_flags : enum #<nuklear.h>
 nk_edit_focus(struct nk_context*, nk_flags flags) -> NK_API void #<nuklear.h>
@@ -415,7 +367,6 @@ nk_edit_string_zero_terminated(struct nk_context*, nk_flags, char* buffer, int m
 nk_edit_types : enum #<nuklear.h>
 nk_edit_unfocus(struct nk_context*) -> NK_API void #<nuklear.h>
 nk_end(struct nk_context* ctx) -> NK_API void #<nuklear.h>
-nk_file_load(const char* path, nk_size* siz, struct nk_allocator* alloc) -> NK_LIB char* #<nuklear_internal.h>
 nk_fill_arc(struct nk_command_buffer*, float cx, float cy, float radius, float a_min, float a_max, struct nk_color) -> NK_API void #<nuklear.h>
 nk_fill_circle(struct nk_command_buffer*, struct nk_rect, struct nk_color) -> NK_API void #<nuklear.h>
 nk_fill_polygon(struct nk_command_buffer*, float*, int point_count, struct nk_color) -> NK_API void #<nuklear.h>
@@ -429,11 +380,6 @@ nk_filter_default(const struct nk_text_edit*, nk_rune unicode) -> NK_API int #<n
 nk_filter_float(const struct nk_text_edit*, nk_rune unicode) -> NK_API int #<nuklear.h>
 nk_filter_hex(const struct nk_text_edit*, nk_rune unicode) -> NK_API int #<nuklear.h>
 nk_filter_oct(const struct nk_text_edit*, nk_rune unicode) -> NK_API int #<nuklear.h>
-nk_find_value(struct nk_window* win, nk_hash name) -> NK_LIB nk_uint* #<nuklear_internal.h>
-nk_find_window(struct nk_context* ctx, nk_hash hash, const char* name) -> NK_LIB struct nk_window* #<nuklear_internal.h>
-nk_finish(struct nk_context* ctx, struct nk_window* w) -> NK_LIB void #<nuklear_internal.h>
-nk_finish_buffer(struct nk_context* ctx, struct nk_command_buffer* b) -> NK_LIB void #<nuklear_internal.h>
-nk_finish_popup(struct nk_context* ctx, struct nk_window*) -> NK_LIB void #<nuklear_internal.h>
 nk_flags _type_ #<nuklear.h>
 nk_float #<nuklear.h>
 nk_font : struct #<nuklear.h>
@@ -461,22 +407,42 @@ nk_font_find_glyph(struct nk_font*, nk_rune unicode) -> NK_API const struct nk_f
 nk_font_korean_glyph_ranges(void) -> NK_API const nk_rune* #<nuklear.h>
 nk_foreach(c, ctx) #<nuklear.h>
 nk_free(struct nk_context*) -> NK_API void #<nuklear.h>
-nk_free_page_element(struct nk_context* ctx, struct nk_page_element* elem) -> NK_LIB void #<nuklear_internal.h>
-nk_free_panel(struct nk_context*, struct nk_panel* pan) -> NK_LIB void #<nuklear_internal.h>
-nk_free_table(struct nk_context* ctx, struct nk_table* tbl) -> NK_LIB void #<nuklear_internal.h>
-nk_free_window(struct nk_context* ctx, struct nk_window* win) -> NK_LIB void #<nuklear_internal.h>
+nk_gdi_blit(HDC dc) -> void #<nuklear_gdi.c>
+nk_gdi_clear(HDC dc, struct nk_color col) -> void #<nuklear_gdi.c>
+nk_gdi_clipboard_copy(nk_handle usr, const char* text, int len) -> void #<nuklear_gdi.c>
+nk_gdi_clipboard_paste(nk_handle usr, struct nk_text_edit* edit) -> void #<nuklear_gdi.c>
 nk_gdi_dispatch(struct nk_context* ctx, int* running) -> NK_API void #<nuklear.h>
+nk_gdi_draw_image(short x, short y, unsigned short w, unsigned short h, struct nk_image img, struct nk_color col) -> void #<nuklear_gdi.c>
+nk_gdi_draw_text(HDC dc, short x, short y, unsigned short w, unsigned short h, const char* text, int len, GdiFont* font, struct nk_color cbg, struct nk_color cfg) -> void #<nuklear_gdi.c>
+nk_gdi_fill_circle(HDC dc, short x, short y, unsigned short w, unsigned short h, struct nk_color col) -> void #<nuklear_gdi.c>
+nk_gdi_fill_polygon(HDC dc, const struct nk_vec2i* pnts, int count, struct nk_color col) -> void #<nuklear_gdi.c>
+nk_gdi_fill_rect(HDC dc, short x, short y, unsigned short w, unsigned short h, unsigned short r, struct nk_color col) -> void #<nuklear_gdi.c>
+nk_gdi_fill_triangle(HDC dc, short x0, short y0, short x1, short y1, short x2, short y2, struct nk_color col) -> void #<nuklear_gdi.c>
+nk_gdi_handle_event(HWND wnd, UINT msg, WPARAM wparam, LPARAM lparam) -> NK_API int #<nuklear_gdi.c>
 nk_gdi_init(unsigned int width, unsigned int height, const char* name) -> NK_API struct nk_context* #<nuklear.h>
+nk_gdi_rect_multi_color(HDC dc, short x, short y, unsigned short w, unsigned short h, struct nk_color left, struct nk_color top, struct nk_color right, struct nk_color bottom) -> void #<nuklear_gdi.c>
 nk_gdi_release(void) -> NK_API void #<nuklear.h>
 nk_gdi_render(struct nk_color clear) -> NK_API void #<nuklear.h>
+nk_gdi_scissor(HDC dc, float x, float y, float w, float h) -> void #<nuklear_gdi.c>
 nk_gdi_set_font(nk_gdifont font) -> NK_API void #<nuklear.h>
+nk_gdi_set_font(nk_gdifont gdifont) -> NK_API void #<nuklear_gdi.c>
+nk_gdi_set_vertexColor(PTRIVERTEX tri, struct nk_color col) -> void #<nuklear_gdi.c>
 nk_gdi_shutdown(void) -> NK_API void #<nuklear.h>
+nk_gdi_stroke_circle(HDC dc, short x, short y, unsigned short w, unsigned short h, unsigned short line_thickness, struct nk_color col) -> void #<nuklear_gdi.c>
+nk_gdi_stroke_curve(HDC dc, struct nk_vec2i p1, struct nk_vec2i p2, struct nk_vec2i p3, struct nk_vec2i p4, unsigned short line_thickness, struct nk_color col) -> void #<nuklear_gdi.c>
+nk_gdi_stroke_line(HDC dc, short x0, short y0, short x1, short y1, unsigned int line_thickness, struct nk_color col) -> void #<nuklear_gdi.c>
+nk_gdi_stroke_polygon(HDC dc, const struct nk_vec2i* pnts, int count, unsigned short line_thickness, struct nk_color col) -> void #<nuklear_gdi.c>
+nk_gdi_stroke_polyline(HDC dc, const struct nk_vec2i* pnts, int count, unsigned short line_thickness, struct nk_color col) -> void #<nuklear_gdi.c>
+nk_gdi_stroke_rect(HDC dc, short x, short y, unsigned short w, unsigned short h, unsigned short r, unsigned short line_thickness, struct nk_color col) -> void #<nuklear_gdi.c>
+nk_gdi_stroke_triangle(HDC dc, short x0, short y0, short x1, short y1, short x2, short y2, unsigned short line_thickness, struct nk_color col) -> void #<nuklear_gdi.c>
 nk_gdifont _type_ #<nuklear.h>
 nk_gdifont_create(const char* name, int size) -> NK_API nk_gdifont #<nuklear.h>
+nk_gdifont_create(const char* name, int size) -> nk_gdifont #<nuklear_gdi.c>
 nk_gdifont_del(nk_gdifont font) -> NK_API void #<nuklear.h>
+nk_gdifont_del(nk_gdifont font) -> void #<nuklear_gdi.c>
+nk_gdifont_get_text_width(nk_handle handle, float height, const char* text, int len) -> float #<nuklear_gdi.c>
 nk_get_null_rect(void) -> NK_API struct nk_rect #<nuklear.h>
 nk_glyph _type_ #<nuklear.h>
-nk_green : NK_GLOBAL const struct nk_color #<nuklear_internal.h>
 nk_group_begin(struct nk_context*, const char* title, nk_flags) -> NK_API int #<nuklear.h>
 nk_group_begin_titled(struct nk_context*, const char* name, const char* title, nk_flags) -> NK_API int #<nuklear.h>
 nk_group_end(struct nk_context*) -> NK_API void #<nuklear.h>
@@ -502,9 +468,6 @@ nk_hsva_colorfv(float* c) -> NK_API struct nk_colorf #<nuklear.h>
 nk_hsva_f(float h, float s, float v, float a) -> NK_API struct nk_color #<nuklear.h>
 nk_hsva_fv(const float* hsva) -> NK_API struct nk_color #<nuklear.h>
 nk_hsva_iv(const int* hsva) -> NK_API struct nk_color #<nuklear.h>
-nk_iceilf(float x) -> NK_LIB int #<nuklear_internal.h>
-nk_ifloord(double x) -> NK_LIB int #<nuklear_internal.h>
-nk_ifloorf(float x) -> NK_LIB int #<nuklear_internal.h>
 nk_image(struct nk_context*, struct nk_image) -> NK_API void #<nuklear.h>
 nk_image_color(struct nk_context*, struct nk_image, struct nk_color) -> NK_API void #<nuklear.h>
 nk_image_handle : NK_API struct nk_image #<nuklear.h>
@@ -539,13 +502,8 @@ nk_input_motion(struct nk_context*, int x, int y) -> NK_API void #<nuklear.h>
 nk_input_mouse_clicked(const struct nk_input*, enum nk_buttons, struct nk_rect) -> NK_API int #<nuklear.h>
 nk_input_scroll(struct nk_context*, struct nk_vec2 val) -> NK_API void #<nuklear.h>
 nk_input_unicode(struct nk_context*, nk_rune) -> NK_API void #<nuklear.h>
-nk_insert_window(struct nk_context* ctx, struct nk_window* win, enum nk_window_insert_location loc) -> NK_LIB void #<nuklear_internal.h>
 nk_int _type_ #<nuklear.h>
-nk_inv_sqrt(float n) -> NK_LIB float #<nuklear_internal.h>
-nk_is_lower(int c) -> NK_LIB int #<nuklear_internal.h>
-nk_is_upper(int c) -> NK_LIB int #<nuklear_internal.h>
 nk_item_is_any_active(struct nk_context*) -> NK_API int #<nuklear.h>
-nk_itoa(char* s, long n) -> NK_LIB char* #<nuklear_internal.h>
 nk_keys : enum #<nuklear.h>
 nk_label(struct nk_context*, const char*, nk_flags align) -> NK_API void #<nuklear.h>
 nk_label_colored(struct nk_context*, const char*, nk_flags align, struct nk_color) -> NK_API void #<nuklear.h>
@@ -560,12 +518,10 @@ nk_labelfv_colored(struct nk_context*, nk_flags, struct nk_color, NK_PRINTF_FORM
 nk_labelfv_colored_wrap(struct nk_context*, struct nk_color, NK_PRINTF_FORMAT_STRING const char*, va_list) -> NK_API void #<nuklear.h>
 nk_labelfv_wrap(struct nk_context*, NK_PRINTF_FORMAT_STRING const char*, va_list) -> NK_API void #<nuklear.h>
 nk_layout_format : enum #<nuklear.h>
-nk_layout_peek(struct nk_rect* bounds, struct nk_context* ctx) -> NK_LIB void #<nuklear_internal.h>
 nk_layout_ratio_from_pixel(struct nk_context*, float pixel_width) -> NK_API float #<nuklear.h>
 nk_layout_reset_min_row_height(struct nk_context*) -> NK_API void #<nuklear.h>
 nk_layout_row(struct nk_context*, enum nk_layout_format, float height, int cols, const float* ratio) -> NK_API void #<nuklear.h>
 nk_layout_row_begin(struct nk_context* ctx, enum nk_layout_format fmt, float row_height, int cols) -> NK_API void #<nuklear.h>
-nk_layout_row_calculate_usable_space(const struct nk_style* style, enum nk_panel_type type, float total_space, int columns) -> NK_LIB float #<nuklear_internal.h>
 nk_layout_row_dynamic(struct nk_context* ctx, float height, int cols) -> NK_API void #<nuklear.h>
 nk_layout_row_end(struct nk_context*) -> NK_API void #<nuklear.h>
 nk_layout_row_push(struct nk_context*, float value) -> NK_API void #<nuklear.h>
@@ -585,14 +541,8 @@ nk_layout_space_rect_to_screen(struct nk_context*, struct nk_rect) -> NK_API str
 nk_layout_space_to_local(struct nk_context*, struct nk_vec2) -> NK_API struct nk_vec2 #<nuklear.h>
 nk_layout_space_to_screen(struct nk_context*, struct nk_vec2) -> NK_API struct nk_vec2 #<nuklear.h>
 nk_layout_widget_bounds(struct nk_context*) -> NK_API struct nk_rect #<nuklear.h>
-nk_layout_widget_space(struct nk_rect* bounds, const struct nk_context* ctx, struct nk_window* win, int modify) -> NK_LIB void #<nuklear_internal.h>
-nk_link_page_element_into_freelist(struct nk_context* ctx, struct nk_page_element* elem) -> NK_LIB void #<nuklear_internal.h>
 nk_list_view_begin(struct nk_context*, struct nk_list_view* out, const char* id, nk_flags, int row_height, int row_count) -> NK_API int #<nuklear.h>
 nk_list_view_end(struct nk_list_view*) -> NK_API void #<nuklear.h>
-nk_log10(double n) -> NK_LIB int #<nuklear_internal.h>
-nk_malloc(nk_handle unused, void* old, nk_size size) -> NK_LIB void* #<nuklear_internal.h>
-nk_memcopy(void* dst, const void* src, nk_size n) -> NK_LIB void* #<nuklear_internal.h>
-nk_memset(void* ptr, int c0, nk_size size) -> NK_LIB void #<nuklear_internal.h>
 nk_menu_begin_image(struct nk_context*, const char*, struct nk_image, struct nk_vec2 size) -> NK_API int #<nuklear.h>
 nk_menu_begin_image_label(struct nk_context*, const char*, nk_flags align, struct nk_image, struct nk_vec2 size) -> NK_API int #<nuklear.h>
 nk_menu_begin_image_text(struct nk_context*, const char*, int, nk_flags align, struct nk_image, struct nk_vec2 size) -> NK_API int #<nuklear.h>
@@ -611,29 +561,14 @@ nk_menu_item_symbol_text(struct nk_context*, enum nk_symbol_type, const char*, i
 nk_menu_item_text(struct nk_context*, const char*, int, nk_flags align) -> NK_API int #<nuklear.h>
 nk_menubar_begin(struct nk_context*) -> NK_API void #<nuklear.h>
 nk_menubar_end(struct nk_context*) -> NK_API void #<nuklear.h>
-nk_mfree(nk_handle unused, void* ptr) -> NK_LIB void #<nuklear_internal.h>
 nk_modify : enum #<nuklear.h>
 nk_murmur_hash(const void* key, int len, nk_hash seed) -> NK_API nk_hash #<nuklear.h>
-nk_nonblock_begin(struct nk_context* ctx, nk_flags flags, struct nk_rect body, struct nk_rect header, enum nk_panel_type panel_type) -> NK_LIB int #<nuklear_internal.h>
-nk_null_rect : NK_GLOBAL const struct nk_rect #<nuklear_internal.h>
 nk_option_label(struct nk_context*, const char*, int active) -> NK_API int #<nuklear.h>
 nk_option_text(struct nk_context*, const char*, int, int active) -> NK_API int #<nuklear.h>
 nk_orientation : enum #<nuklear.h>
-nk_pad_rect(struct nk_rect r, struct nk_vec2 pad) -> NK_LIB struct nk_rect #<nuklear_internal.h>
 nk_page_data : union #<nuklear.h>
 nk_panel : struct #<nuklear.h>
-nk_panel_alloc_row(const struct nk_context* ctx, struct nk_window* win) -> NK_LIB void #<nuklear_internal.h>
-nk_panel_alloc_space(struct nk_rect* bounds, const struct nk_context* ctx) -> NK_LIB void #<nuklear_internal.h>
-nk_panel_begin(struct nk_context* ctx, const char* title, enum nk_panel_type panel_type) -> NK_LIB int #<nuklear_internal.h>
-nk_panel_end(struct nk_context* ctx) -> NK_LIB void #<nuklear_internal.h>
 nk_panel_flags : enum #<nuklear.h>
-nk_panel_get_border(const struct nk_style* style, nk_flags flags, enum nk_panel_type type) -> NK_LIB float #<nuklear_internal.h>
-nk_panel_get_border_color(const struct nk_style* style, enum nk_panel_type type) -> NK_LIB struct nk_color #<nuklear_internal.h>
-nk_panel_get_padding(const struct nk_style* style, enum nk_panel_type type) -> NK_LIB struct nk_vec2 #<nuklear_internal.h>
-nk_panel_has_header(nk_flags flags, const char* title) -> NK_LIB int #<nuklear_internal.h>
-nk_panel_is_nonblock(enum nk_panel_type type) -> NK_LIB int #<nuklear_internal.h>
-nk_panel_is_sub(enum nk_panel_type type) -> NK_LIB int #<nuklear_internal.h>
-nk_panel_layout(const struct nk_context* ctx, struct nk_window* win, float height, int cols) -> NK_LIB void #<nuklear_internal.h>
 nk_panel_row_layout_type : enum #<nuklear.h>
 nk_panel_set : enum #<nuklear.h>
 nk_panel_type : enum #<nuklear.h>
@@ -644,32 +579,17 @@ nk_plugin_copy _type_ #<nuklear.h>
 nk_plugin_filter _type_ #<nuklear.h>
 nk_plugin_free _type_ #<nuklear.h>
 nk_plugin_paste _type_ #<nuklear.h>
-nk_pool_alloc(struct nk_pool* pool) -> NK_LIB struct nk_page_element* #<nuklear_internal.h>
-nk_pool_free(struct nk_pool* pool) -> NK_LIB void #<nuklear_internal.h>
-nk_pool_init(struct nk_pool* pool, struct nk_allocator* alloc, unsigned int capacity) -> NK_LIB void #<nuklear_internal.h>
-nk_pool_init_fixed(struct nk_pool* pool, void* memory, nk_size size) -> NK_LIB void #<nuklear_internal.h>
 nk_popup_begin(struct nk_context*, enum nk_popup_type, const char*, nk_flags, struct nk_rect bounds) -> NK_API int #<nuklear.h>
 nk_popup_close(struct nk_context*) -> NK_API void #<nuklear.h>
 nk_popup_end(struct nk_context*) -> NK_API void #<nuklear.h>
 nk_popup_get_scroll(struct nk_context*, nk_uint* offset_x, nk_uint* offset_y) -> NK_API void #<nuklear.h>
 nk_popup_set_scroll(struct nk_context*, nk_uint offset_x, nk_uint offset_y) -> NK_API void #<nuklear.h>
 nk_popup_type : enum #<nuklear.h>
-nk_pow(double x, int n) -> NK_LIB double #<nuklear_internal.h>
 nk_prog(struct nk_context*, nk_size cur, nk_size max, int modifyable) -> NK_API nk_size #<nuklear.h>
 nk_progress(struct nk_context*, nk_size* cur, nk_size max, int modifyable) -> NK_API int #<nuklear.h>
-nk_progress_behavior(nk_flags* state, struct nk_input* in, struct nk_rect r, struct nk_rect cursor, nk_size max, nk_size value, int modifiable) -> NK_LIB nk_size #<nuklear_internal.h>
-nk_property : union #<nuklear_internal.h>
-nk_property(struct nk_context* ctx, const char* name, struct nk_property_variant* variant, float inc_per_pixel, const enum nk_property_filter filter) -> NK_LIB void #<nuklear_internal.h>
-nk_property_behavior(nk_flags* ws, const struct nk_input* in, struct nk_rect property, struct nk_rect label, struct nk_rect edit, struct nk_rect empty, int* state, struct nk_property_variant* variant, float inc_per_pixel) -> NK_LIB void #<nuklear_internal.h>
 nk_property_double(struct nk_context*, const char* name, double min, double* val, double max, double step, float inc_per_pixel) -> NK_API void #<nuklear.h>
-nk_property_filter : enum #<nuklear_internal.h>
 nk_property_float(struct nk_context*, const char* name, float min, float* val, float max, float step, float inc_per_pixel) -> NK_API void #<nuklear.h>
 nk_property_int(struct nk_context*, const char* name, int min, int* val, int max, int step, float inc_per_pixel) -> NK_API void #<nuklear.h>
-nk_property_kind : enum #<nuklear_internal.h>
-nk_property_status : enum #<nuklear_internal.h>
-nk_property_variant_double(double value, double min_value, double max_value, double step) -> NK_LIB struct nk_property_variant #<nuklear_internal.h>
-nk_property_variant_float(float value, float min_value, float max_value, float step) -> NK_LIB struct nk_property_variant #<nuklear_internal.h>
-nk_property_variant_int(int value, int min_value, int max_value, int step) -> NK_LIB struct nk_property_variant #<nuklear_internal.h>
 nk_propertyd(struct nk_context*, const char* name, double min, double val, double max, double step, float inc_per_pixel) -> NK_API double #<nuklear.h>
 nk_propertyf(struct nk_context*, const char* name, float min, float val, float max, float step, float inc_per_pixel) -> NK_API float #<nuklear.h>
 nk_propertyi(struct nk_context*, const char* name, int min, int val, int max, int step, float inc_per_pixel) -> NK_API int #<nuklear.h>
@@ -678,7 +598,6 @@ nk_ptr_add(t, p, i) #<nuklear.h>
 nk_ptr_add_const(t, p, i) #<nuklear.h>
 nk_push_custom(struct nk_command_buffer*, struct nk_rect, nk_command_custom_callback, nk_handle usr) -> NK_API void #<nuklear.h>
 nk_push_scissor(struct nk_command_buffer*, struct nk_rect) -> NK_API void #<nuklear.h>
-nk_push_table(struct nk_window* win, struct nk_table* tbl) -> NK_LIB void #<nuklear_internal.h>
 nk_query_font_glyph_f _type_ #<nuklear.h>
 nk_radio_label(struct nk_context*, const char*, int* active) -> NK_API int #<nuklear.h>
 nk_radio_text(struct nk_context*, const char*, int, int* active) -> NK_API int #<nuklear.h>
@@ -689,9 +608,6 @@ nk_recta(struct nk_vec2 pos, struct nk_vec2 size) -> NK_API struct nk_rect #<nuk
 nk_recti(int x, int y, int w, int h) -> NK_API struct nk_rect #<nuklear.h>
 nk_rectiv(const int* xywh) -> NK_API struct nk_rect #<nuklear.h>
 nk_rectv(const float* xywh) -> NK_API struct nk_rect #<nuklear.h>
-nk_red : NK_GLOBAL const struct nk_color #<nuklear_internal.h>
-nk_remove_table(struct nk_window* win, struct nk_table* tbl) -> NK_LIB void #<nuklear_internal.h>
-nk_remove_window(struct nk_context*, struct nk_window*) -> NK_LIB void #<nuklear_internal.h>
 nk_rgb(int r, int g, int b) -> NK_API struct nk_color #<nuklear.h>
 nk_rgb_bv(const nk_byte* rgb) -> NK_API struct nk_color #<nuklear.h>
 nk_rgb_cf(struct nk_colorf c) -> NK_API struct nk_color #<nuklear.h>
@@ -707,10 +623,7 @@ nk_rgba_fv(const float* rgba) -> NK_API struct nk_color #<nuklear.h>
 nk_rgba_hex(const char* rgb) -> NK_API struct nk_color #<nuklear.h>
 nk_rgba_iv(const int* rgba) -> NK_API struct nk_color #<nuklear.h>
 nk_rgba_u32(nk_uint) -> NK_API struct nk_color #<nuklear.h>
-nk_round_up_pow2(nk_uint v) -> NK_LIB nk_uint #<nuklear_internal.h>
-nk_row_layout(struct nk_context* ctx, enum nk_layout_format fmt, float height, int cols, int width) -> NK_LIB void #<nuklear_internal.h>
 nk_rune _type_ #<nuklear.h>
-nk_scrollbar_behavior(nk_flags* state, struct nk_input* in, int has_scrolling, const struct nk_rect* scroll, const struct nk_rect* cursor, const struct nk_rect* empty0, const struct nk_rect* empty1, float scroll_offset, float target, float scroll_step, enum nk_orientation o) -> NK_LIB float #<nuklear_internal.h>
 nk_select_image_label(struct nk_context*, struct nk_image, const char*, nk_flags align, int value) -> NK_API int #<nuklear.h>
 nk_select_image_text(struct nk_context*, struct nk_image, const char*, int, nk_flags align, int value) -> NK_API int #<nuklear.h>
 nk_select_label(struct nk_context*, const char*, nk_flags align, int value) -> NK_API int #<nuklear.h>
@@ -727,19 +640,12 @@ nk_set_theme(struct nk_context* ctx, enum nk_theme theme) -> NK_API void #<nukle
 nk_set_user_data(struct nk_context*, nk_handle handle) -> NK_API void #<nuklear.h>
 nk_short _type_ #<nuklear.h>
 nk_show_states : enum #<nuklear.h>
-nk_shrink_rect(struct nk_rect r, float amount) -> NK_LIB struct nk_rect #<nuklear_internal.h>
-nk_sin(float x) -> NK_LIB float #<nuklear_internal.h>
 nk_size _type_ #<nuklear.h>
 nk_slide_float(struct nk_context*, float min, float val, float max, float step) -> NK_API float #<nuklear.h>
 nk_slide_int(struct nk_context*, int min, int val, int max, int step) -> NK_API int #<nuklear.h>
-nk_slider_behavior(nk_flags* state, struct nk_rect* logical_cursor, struct nk_rect* visual_cursor, struct nk_input* in, struct nk_rect bounds, float slider_min, float slider_max, float slider_value, float slider_step, float slider_steps) -> NK_LIB float #<nuklear_internal.h>
 nk_slider_float(struct nk_context*, float min, float* val, float max, float step) -> NK_API int #<nuklear.h>
 nk_slider_int(struct nk_context*, int min, int* val, int max, int step) -> NK_API int #<nuklear.h>
 nk_spacing(struct nk_context*, int cols) -> NK_API void #<nuklear.h>
-nk_sqrt(float x) -> NK_LIB float #<nuklear_internal.h>
-nk_start(struct nk_context* ctx, struct nk_window* win) -> NK_LIB void #<nuklear_internal.h>
-nk_start_buffer(struct nk_context* ctx, struct nk_command_buffer* b) -> NK_LIB void #<nuklear_internal.h>
-nk_start_popup(struct nk_context* ctx, struct nk_window* win) -> NK_LIB void #<nuklear_internal.h>
 nk_str_append_str_char(struct nk_str*, const char*) -> NK_API int #<nuklear.h>
 nk_str_append_str_runes(struct nk_str*, const nk_rune*) -> NK_API int #<nuklear.h>
 nk_str_append_str_utf8(struct nk_str*, const char*) -> NK_API int #<nuklear.h>
@@ -773,10 +679,8 @@ nk_str_remove_chars(struct nk_str*, int len) -> NK_API void #<nuklear.h>
 nk_str_remove_runes(struct nk_str* str, int len) -> NK_API void #<nuklear.h>
 nk_str_rune_at(const struct nk_str*, int pos) -> NK_API nk_rune #<nuklear.h>
 nk_strfilter(const char* text, const char* regexp) -> NK_API int #<nuklear.h>
-nk_strfmt(char* buf, int buf_size, const char* fmt, va_list args) -> NK_LIB int #<nuklear_internal.h>
 nk_stricmp(const char* s1, const char* s2) -> NK_API int #<nuklear.h>
 nk_stricmpn(const char* s1, const char* s2, int n) -> NK_API int #<nuklear.h>
-nk_string_float_limit(char* string, int prec) -> NK_LIB int #<nuklear_internal.h>
 nk_strlen(const char* str) -> NK_API int #<nuklear.h>
 nk_strmatch_fuzzy_string(char const* str, char const* pattern, int* out_score) -> NK_API int #<nuklear.h>
 nk_strmatch_fuzzy_text(const char* txt, int txt_len, const char* pattern, int* out_score) -> NK_API int #<nuklear.h>
@@ -842,8 +746,6 @@ nk_table : struct #<nuklear.h>
 nk_text(struct nk_context*, const char*, int, nk_flags) -> NK_API void #<nuklear.h>
 nk_text_align : enum #<nuklear.h>
 nk_text_alignment : enum #<nuklear.h>
-nk_text_calculate_text_bounds(const struct nk_user_font* font, const char* begin, int byte_len, float row_height, const char** remaining, struct nk_vec2* out_offset, int* glyphs, int op) -> NK_LIB struct nk_vec2 #<nuklear_internal.h>
-nk_text_clamp(const struct nk_user_font* font, const char* text, int text_len, float space, int* glyphs, float* text_width, nk_rune* sep_list, int sep_count) -> NK_LIB int #<nuklear_internal.h>
 nk_text_colored(struct nk_context*, const char*, int, nk_flags, struct nk_color) -> NK_API void #<nuklear.h>
 nk_text_edit : struct #<nuklear.h>
 nk_text_edit_mode : enum #<nuklear.h>
@@ -851,27 +753,19 @@ nk_text_edit_type : enum #<nuklear.h>
 nk_text_width_f _type_ #<nuklear.h>
 nk_text_wrap(struct nk_context*, const char*, int) -> NK_API void #<nuklear.h>
 nk_text_wrap_colored(struct nk_context*, const char*, int, struct nk_color) -> NK_API void #<nuklear.h>
-nk_textedit_clear_state(struct nk_text_edit* state, enum nk_text_edit_type type, nk_plugin_filter filter) -> NK_LIB void #<nuklear_internal.h>
-nk_textedit_click(struct nk_text_edit* state, float x, float y, const struct nk_user_font* font, float row_height) -> NK_LIB void #<nuklear_internal.h>
 nk_textedit_cut(struct nk_text_edit*) -> NK_API int #<nuklear.h>
 nk_textedit_delete(struct nk_text_edit*, int where, int len) -> NK_API void #<nuklear.h>
 nk_textedit_delete_selection(struct nk_text_edit*) -> NK_API void #<nuklear.h>
-nk_textedit_drag(struct nk_text_edit* state, float x, float y, const struct nk_user_font* font, float row_height) -> NK_LIB void #<nuklear_internal.h>
 nk_textedit_free(struct nk_text_edit*) -> NK_API void #<nuklear.h>
 nk_textedit_init(struct nk_text_edit*, struct nk_allocator*, nk_size size) -> NK_API void #<nuklear.h>
 nk_textedit_init_default(struct nk_text_edit*) -> NK_API void #<nuklear.h>
 nk_textedit_init_fixed(struct nk_text_edit*, void* memory, nk_size size) -> NK_API void #<nuklear.h>
-nk_textedit_key(struct nk_text_edit* state, enum nk_keys key, int shift_mod, const struct nk_user_font* font, float row_height) -> NK_LIB void #<nuklear_internal.h>
 nk_textedit_paste(struct nk_text_edit*, char const*, int len) -> NK_API int #<nuklear.h>
 nk_textedit_redo(struct nk_text_edit*) -> NK_API void #<nuklear.h>
 nk_textedit_select_all(struct nk_text_edit*) -> NK_API void #<nuklear.h>
 nk_textedit_text(struct nk_text_edit*, const char*, int total_len) -> NK_API void #<nuklear.h>
 nk_textedit_undo(struct nk_text_edit*) -> NK_API void #<nuklear.h>
 nk_theme : enum #<nuklear.h>
-nk_to_lower(int c) -> NK_LIB int #<nuklear_internal.h>
-nk_to_upper(int c) -> NK_LIB int #<nuklear_internal.h>
-nk_toggle_behavior(const struct nk_input* in, struct nk_rect select, nk_flags* state, int active) -> NK_LIB int #<nuklear_internal.h>
-nk_toggle_type : enum #<nuklear_internal.h>
 nk_tooltip(struct nk_context*, const char*) -> NK_API void #<nuklear.h>
 nk_tooltip_begin(struct nk_context*, float width) -> NK_API int #<nuklear.h>
 nk_tooltip_end(struct nk_context*) -> NK_API void #<nuklear.h>
@@ -896,7 +790,6 @@ nk_tree_type : enum #<nuklear.h>
 nk_triangle_from_direction(struct nk_vec2* result, struct nk_rect r, float pad_x, float pad_y, enum nk_heading) -> NK_API void #<nuklear.h>
 nk_uchar _type_ #<nuklear.h>
 nk_uint _type_ #<nuklear.h>
-nk_unify(struct nk_rect* clip, const struct nk_rect* a, float x0, float y0, float x1, float y1) -> NK_LIB void #<nuklear_internal.h>
 nk_user_font : struct #<nuklear.h>
 nk_user_font_glyph : struct #<nuklear.h>
 nk_ushort _type_ #<nuklear.h>
@@ -920,7 +813,6 @@ nk_vec2_sub(a, b) #<nuklear.h>
 nk_vec2i(int x, int y) -> NK_API struct nk_vec2 #<nuklear.h>
 nk_vec2iv(const int* xy) -> NK_API struct nk_vec2 #<nuklear.h>
 nk_vec2v(const float* xy) -> NK_API struct nk_vec2 #<nuklear.h>
-nk_white : NK_GLOBAL const struct nk_color #<nuklear_internal.h>
 nk_widget(struct nk_rect*, const struct nk_context*) -> NK_API enum nk_widget_layout_states #<nuklear.h>
 nk_widget_bounds(struct nk_context*) -> NK_API struct nk_rect #<nuklear.h>
 nk_widget_fitting(struct nk_rect*, struct nk_context*, struct nk_vec2) -> NK_API enum nk_widget_layout_states #<nuklear.h>
@@ -931,10 +823,7 @@ nk_widget_is_mouse_clicked(struct nk_context*, enum nk_buttons) -> NK_API int #<
 nk_widget_layout_states : enum #<nuklear.h>
 nk_widget_position(struct nk_context*) -> NK_API struct nk_vec2 #<nuklear.h>
 nk_widget_size(struct nk_context*) -> NK_API struct nk_vec2 #<nuklear.h>
-nk_widget_state_reset(s) #<nuklear_internal.h>
 nk_widget_states : enum #<nuklear.h>
-nk_widget_text(struct nk_command_buffer* o, struct nk_rect b, const char* string, int len, const struct nk_text* t, nk_flags a, const struct nk_user_font* f) -> NK_LIB void #<nuklear_internal.h>
-nk_widget_text_wrap(struct nk_command_buffer* o, struct nk_rect b, const char* string, int len, const struct nk_text* t, const struct nk_user_font* f) -> NK_LIB void #<nuklear_internal.h>
 nk_widget_width(struct nk_context*) -> NK_API float #<nuklear.h>
 nk_window_close(struct nk_context* ctx, const char* name) -> NK_API void #<nuklear.h>
 nk_window_collapse(struct nk_context*, const char* name, enum nk_collapse_states state) -> NK_API void #<nuklear.h>
@@ -954,7 +843,6 @@ nk_window_get_scroll(struct nk_context*, nk_uint* offset_x, nk_uint* offset_y) -
 nk_window_get_size(const struct nk_context*) -> NK_API struct nk_vec2 #<nuklear.h>
 nk_window_get_width(const struct nk_context*) -> NK_API float #<nuklear.h>
 nk_window_has_focus(const struct nk_context*) -> NK_API int #<nuklear.h>
-nk_window_insert_location : enum #<nuklear_internal.h>
 nk_window_is_active(struct nk_context*, const char*) -> NK_API int #<nuklear.h>
 nk_window_is_any_hovered(struct nk_context*) -> NK_API int #<nuklear.h>
 nk_window_is_closed(struct nk_context*, const char*) -> NK_API int #<nuklear.h>
@@ -968,12 +856,22 @@ nk_window_set_scroll(struct nk_context*, nk_uint offset_x, nk_uint offset_y) -> 
 nk_window_set_size(struct nk_context*, const char* name, struct nk_vec2) -> NK_API void #<nuklear.h>
 nk_window_show(struct nk_context*, const char* name, enum nk_show_states) -> NK_API void #<nuklear.h>
 nk_window_show_if(struct nk_context*, const char* name, enum nk_show_states, int cond) -> NK_API void #<nuklear.h>
-nk_yellow : NK_GLOBAL const struct nk_color #<nuklear_internal.h>
-nk_zero(void* ptr, nk_size size) -> NK_LIB void #<nuklear_internal.h>
 nk_zero_struct(s) #<nuklear.h>
+page : enum #<main.c>
 ptr _type_ #<nuklear.h>
-	Car::v : double #<test.c>
-	Car::x : int #<test.c>
+running : int #<main.c>
+traffic _type_ #<main.c>
+wc : WNDCLASS #<nuklear_gdi.c>
+window_dc : HDC #<nuklear_gdi.c>
+wnd : HWND #<nuklear_gdi.c>
+	Car::want_v : double #<main.c>
+	Car::v : double #<main.c>
+	Car::x : int #<main.c>
+	Car::t : double #<main.c>
+	GdiFont::nk : struct nk_user_font #<nuklear_gdi.c>
+	GdiFont::height : int #<nuklear_gdi.c>
+	GdiFont::handle : HFONT #<nuklear_gdi.c>
+	GdiFont::dc : HDC #<nuklear_gdi.c>
 	nk_allocator::userdata : nk_handle #<nuklear.h>
 	nk_allocator::alloc : nk_plugin_alloc #<nuklear.h>
 	nk_allocator::free : nk_plugin_free #<nuklear.h>
@@ -994,10 +892,10 @@ ptr _type_ #<nuklear.h>
 	nk_buffer::size : nk_size #<nuklear.h>
 	nk_buffer_marker::active : int #<nuklear.h>
 	nk_buffer_marker::offset : nk_size #<nuklear.h>
-	nk_canvas::painter : struct nk_command_buffer* #<test.c>
-	nk_canvas::item_spacing : struct nk_vec2 #<test.c>
-	nk_canvas::panel_padding : struct nk_vec2 #<test.c>
-	nk_canvas::window_background : struct nk_style_item #<test.c>
+	nk_canvas::painter : struct nk_command_buffer* #<main.c>
+	nk_canvas::item_spacing : struct nk_vec2 #<main.c>
+	nk_canvas::panel_padding : struct nk_vec2 #<main.c>
+	nk_canvas::window_background : struct nk_style_item #<main.c>
 	nk_chart::slot : int #<nuklear.h>
 	nk_chart::x : float #<nuklear.h>
 	nk_chart::y : float #<nuklear.h>
@@ -1378,11 +1276,6 @@ ptr _type_ #<nuklear.h>
 	nk_property_state::seq : unsigned int #<nuklear.h>
 	nk_property_state::old : unsigned int #<nuklear.h>
 	nk_property_state::state : int #<nuklear.h>
-	nk_property_variant::kind : enum nk_property_kind #<nuklear_internal.h>
-	nk_property_variant::value : union nk_property #<nuklear_internal.h>
-	nk_property_variant::min_value : union nk_property #<nuklear_internal.h>
-	nk_property_variant::max_value : union nk_property #<nuklear_internal.h>
-	nk_property_variant::step : union nk_property #<nuklear_internal.h>
 	nk_rect::x : float #<nuklear.h>
 	nk_rect::y : float #<nuklear.h>
 	nk_rect::w : float #<nuklear.h>
@@ -1676,9 +1569,6 @@ ptr _type_ #<nuklear.h>
 	nk_table::values : nk_uint[] #<nuklear.h>
 	nk_table::next : struct nk_table* #<nuklear.h>
 	nk_table::prev : struct nk_table* #<nuklear.h>
-	nk_text::padding : struct nk_vec2 #<nuklear_internal.h>
-	nk_text::background : struct nk_color #<nuklear_internal.h>
-	nk_text::text : struct nk_color #<nuklear_internal.h>
 	nk_text_edit::clip : struct nk_clipboard #<nuklear.h>
 	nk_text_edit::string : struct nk_str #<nuklear.h>
 	nk_text_edit::filter : nk_plugin_filter #<nuklear.h>
@@ -1737,3 +1627,7 @@ ptr _type_ #<nuklear.h>
 	nk_window::next : struct nk_window* #<nuklear.h>
 	nk_window::prev : struct nk_window* #<nuklear.h>
 	nk_window::parent : struct nk_window* #<nuklear.h>
+	traffic::head : int #<main.c>
+	traffic::tail : int #<main.c>
+	traffic::size : int #<main.c>
+	traffic::car : struct Car #<main.c>

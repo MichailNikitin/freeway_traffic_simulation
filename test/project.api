@@ -1,0 +1,9 @@
+#
+!TestTime.c stdio.h time.h #<#>
+!test.cpp stdio.h sys/time.h #<#>
+fibonacci(unsigned n) -> long #<test.cpp>
+main() -> int #<test.cpp>
+main(void) -> int #<TestTime.c>
+secs : double #<test.cpp>
+start : struct timeval #<test.cpp>
+stop : struct timeval #<test.cpp>
