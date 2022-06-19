@@ -95,13 +95,17 @@
  struct@nk_vec2i _type_ #<nuklear.h>
  struct@nk_window _type_ #<nuklear.h>
  struct@traffic _type_ #<main.c>
+Accel : double #<main.c>
 CarsCount : int #<main.c>
+CarsCountMax : int #<main.c>
 Collision : int #<main.c>
 FreeSpaceInStart : int #<main.c>
 GdiFont _type_ #<nuklear_gdi.c>
 HEIDTH #<main.c>
 HEIDTH_BUTTON #<main.c>
 HEIDTH_TEXT #<main.c>
+LastCar_index : int #<main.c>
+MaxSpeed_KmH : double #<main.c>
 NK_ABS(a) #<nuklear.h>
 NK_ALIGNOF(t) #<nuklear.h>
 NK_ALIGN_PTR(x, mask) #<nuklear.h>
@@ -164,11 +168,14 @@ NK_UTF_INVALID #<nuklear.h>
 NK_UTF_SIZE #<nuklear.h>
 NK_VALUE_PAGE_CAPACITY #<nuklear.h>
 NK_VERTEX_LAYOUT_END #<nuklear.h>
+SafeDist_m : int #<main.c>
+SafeDist_pixel : int #<main.c>
 WIDTH #<main.c>
 WIDTH_BUTTON #<main.c>
 WIN32_LEAN_AND_MEAN #<nuklear_gdi.c>
 WindowProc(HWND wnd, UINT msg, WPARAM wparam, LPARAM lparam) -> LRESULT CALLBACK #<nuklear_gdi.c>
 about() -> void #<main.c>
+add_car_in_start(int i_car) -> void #<main.c>
 canvas : struct nk_canvas #<main.c>
 canvas_begin(struct nk_context* ctx, struct nk_canvas* canvas, nk_flags flags, int x, int y, int width, int height, struct nk_color background_color) -> void #<main.c>
 canvas_end(struct nk_context* ctx, struct nk_canvas* canvas) -> void #<main.c>
@@ -179,10 +186,14 @@ enum :  #<nuklear.h>
 gdi : struct gdi_param #<nuklear_gdi.c>
 gdi_param : struct #<MyNuklear.h>
 gdifont : GdiFont* #<nuklear_gdi.c>
+i_next(i,CarMax) #<main.c>
+i_prev(i,CarMax) #<main.c>
 id : int #<nuklear.h>
+k : int #<main.c>
 main(void) -> int #<main.c>
 menu() -> void #<main.c>
 model() -> void #<main.c>
+moving_car_in(int i, int roadW) -> int #<main.c>
 nk_MyGdi_dispatch() -> void #<main.c>
 nk__begin(struct nk_context*) -> NK_API const struct nk_command* #<nuklear.h>
 nk__draw_begin(const struct nk_context*, const struct nk_buffer*) -> NK_API const struct nk_draw_command* #<nuklear.h>
@@ -861,6 +872,8 @@ page : enum #<main.c>
 ptr _type_ #<nuklear.h>
 running : int #<main.c>
 traffic _type_ #<main.c>
+v_KmH : int #<main.c>
+v_pixel : int #<main.c>
 wc : WNDCLASS #<nuklear_gdi.c>
 window_dc : HDC #<nuklear_gdi.c>
 wnd : HWND #<nuklear_gdi.c>
