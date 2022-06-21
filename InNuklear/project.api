@@ -94,7 +94,6 @@
  struct@nk_vec2 _type_ #<nuklear.h>
  struct@nk_vec2i _type_ #<nuklear.h>
  struct@nk_window _type_ #<nuklear.h>
- struct@traffic _type_ #<main.c>
 Accel : double #<main.c>
 CarsCount : int #<main.c>
 CarsCountMax : int #<main.c>
@@ -871,7 +870,6 @@ nk_zero_struct(s) #<nuklear.h>
 page : enum #<main.c>
 ptr _type_ #<nuklear.h>
 running : int #<main.c>
-traffic _type_ #<main.c>
 v_KmH : int #<main.c>
 v_pixel : int #<main.c>
 wc : WNDCLASS #<nuklear_gdi.c>
@@ -1640,7 +1638,3 @@ wnd : HWND #<nuklear_gdi.c>
 	nk_window::next : struct nk_window* #<nuklear.h>
 	nk_window::prev : struct nk_window* #<nuklear.h>
 	nk_window::parent : struct nk_window* #<nuklear.h>
-	traffic::head : int #<main.c>
-	traffic::tail : int #<main.c>
-	traffic::size : int #<main.c>
-	traffic::car : struct Car #<main.c>
