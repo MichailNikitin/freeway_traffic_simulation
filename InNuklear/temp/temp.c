@@ -5,6 +5,7 @@
 
 
 
+
 #define WIDTH 1000
 #define HEIDTH 800
 
@@ -22,34 +23,37 @@ int Collision = 0;
 int CarsCount = 0; // Number of cars on the road (int)
 int CarsCountMax;
 
-double MaxSpeed_KmH = 5.0;
+nk_gdifont Times;
+
+double MaxSpeed_KmH = 50.0;
 int v_KmH = 0;
 int v_pixel = 0;
 int SafeDist_m = 10;
 int SafeDist_pixel = 0;
 double Accel = 2;
-int LastCar_index = 0
+int LastCar_index = 0;
+int Is_StartFree = 1;
 
-                    struct nk_canvas canvas;
+struct nk_canvas canvas;
 struct nk_context *ctx;
+
+void add_car_in_start(int i_car);
+int moving_car_in(int i);
 
 enum page {
    MENU, ABOUT, MODEL
 } selected_page = MENU;
+enum comands {
+   BRAKING = -1, NORMAL, SPEEDUP
+} speed_comand = NORMAL;
+
 
 struct Car {
    double want_v;
    double v;
-   int x;
+   double x;
    double t;
-} cars[30];
-
-typedef struct traffic {
-   int head;
-   int tail;
-   int size;
-   struct Car car;
-} traffic;
+} cars[1000];
 
 void nk_MyGdi_dispatch() {
 
@@ -71,7 +75,7 @@ struct nk_canvas {
    struct nk_vec2 panel_padding;
    struct nk_style_item window_background;
 };
-/*__________convas function___________*/
+/*__________convas functions___________*/
 static void
 canvas_begin(struct nk_context *ctx, struct nk_canvas *canvas, nk_flags flags,
              int x, int y, int width, int height, struct nk_color background_color) {
@@ -107,27 +111,23 @@ canvas_end(struct nk_context *ctx, struct nk_canvas *canvas) {
    ctx->style.window.fixed_background = canvas->window_background;
 }
 
-int moving_car_in(int i, int roadW) {
-   int new_x;
-   double t = clock() - cars[i].t;
-   v_KmH = cars[i].v;
-   v_pixel = (int)(v_KmH/3.6)/k;
-   new_x = cars[i].x + v_pixel*t + Accel*t*t/2;
-   if (new_x < roadW) {
-      if (cars[i].x - new_x < SafeDist_pixel)
-         return new_x;
-      else
-         return cars[i].x + v_pixel *t - Accel *t *t/2;
-   }
-   else{
-      if 
-      }
+
+/*__________Cars functions___________*/
+void add_car_in_start(int i) {
+   cars[i].x = 2;
+   cars[i].want_v = ((double)rand()/(double)(RAND_MAX))*(MaxSpeed_KmH - 40) + 40;
+   printf("%lf -- %d\n", cars[i].want_v, i); 
+   cars[i].v = cars[i].want_v;
+   cars[i].t = clock();
+   LastCar_index = i;
 }
 
-void add_car_in_start(int i_car){
-   if(cars[LastCar_index].x < SafeDist_pixel){
-      printf("dont have space in the beginning of the road");
-      return;
-   }
-   else{
-      _abracadabra_cast(cars[i_prev(i_car, CarsCountMax)]);
+int moving_car_in(int i) {
+   double new_x;
+   double t = (clock() - cars[i].t)/10000;
+   v_KmH = cars[i].v + speed_comand*Accel*t;
+   new_x = cars[i].x + v_KmH/3.6*t + speed_comand*Accel*t*t/2.0;
+ 
+   //printf("%lf координаты машины %d\n", new_x, i);
+   cars[i].x = new_x;
+   _abracadabra_cast(cars[i]);

@@ -29,6 +29,7 @@ int SafeDist_m = 10;
 int SafeDist_pixel = 0;
 double Accel = 2;
 int LastCar_index = 0;
+int Is_StartFree = 1;
 
 struct nk_canvas canvas;
 struct nk_context *ctx;
@@ -43,16 +44,9 @@ enum page {
 struct Car {
    double want_v;
    double v;
-   int x;
+   double x;
    double t;
 } cars[30];
-
-typedef struct traffic {
-   int head;
-   int tail;
-   int size;
-   struct Car car;
-} traffic;
 
 void nk_MyGdi_dispatch() {
 
@@ -74,7 +68,7 @@ struct nk_canvas {
    struct nk_vec2 panel_padding;
    struct nk_style_item window_background;
 };
-/*__________convas function___________*/
+/*__________convas functions___________*/
 static void
 canvas_begin(struct nk_context *ctx, struct nk_canvas *canvas, nk_flags flags,
              int x, int y, int width, int height, struct nk_color background_color) {
@@ -110,40 +104,25 @@ canvas_end(struct nk_context *ctx, struct nk_canvas *canvas) {
    ctx->style.window.fixed_background = canvas->window_background;
 }
 
+
+/*__________Cars functions___________*/
+void add_car_in_start(int i) {
+   cars[i].x = 2;
+   cars[i].want_v = ((float)rand()/(float)(RAND_MAX))*MaxSpeed_KmH;
+   cars[i].v = cars[i].want_v;
+   cars[i].t = clock();
+}
+
 int moving_car_in(int i, int roadW) {
-   int new_x;
-   double t = clock() - cars[i].t;
+   double new_x;
+   double t = (clock() - cars[i].t)/10000;
    v_KmH = cars[i].v;
    v_pixel = (int)(v_KmH/3.6)/k;
-   new_x = cars[i].x + v_pixel*t + Accel*t*t/2;
-   if (new_x < roadW) {
-      if (cars[i].x - new_x < SafeDist_pixel)
-         return new_x;
-      else
-         return cars[i].x + v_pixel *t - Accel *t *t/2;
-   }
-   else{
-      add_car_in_start(i);
-      }
+   new_x = (cars[i].x + v_KmH/3.6*t + Accel*t*t/2.0);
+   printf("%lf координаты машины %d", new_x, i);
+   cars[i].x = new_x;
+   return (int)(new_x/k);
 }
-
-void add_car_in_start(int i_car){
-   if(cars[LastCar_index].x < SafeDist_pixel){
-      printf("dont have space in the beginning of the road");
-      return;
-   }
-   else{
-      int i = i_next(i_car, CarsCountMax);
-         cars[i].x = 3;
-         cars[i].want_v = (int)((rand()+MaxSpeed_KmH/3.6)/k) % (int)MaxSpeed_KmH;
-         cars[i].v = cars[i].want_v;
-         cars[i].t = clock();
-         if(CarsCount < CarsCountMax)
-            CarsCount++;
-   }
-   
-}
-
 /*________window:Start-Menu__________*/
 void menu() {
    if (nk_begin(ctx, "Меню", nk_rect(0, 0, gdi.width, gdi.height),
@@ -175,16 +154,17 @@ void about() {
       nk_layout_row_dynamic(ctx, HEIDTH_TEXT, 1);
       nk_label(ctx, "Это Программа моделирования движения на автостраде", NK_TEXT_CENTERED);
 
+      //ctx.style().text().padding().set(10, 10);
       nk_layout_row_dynamic(ctx, 250, 1);
-      nk_label(ctx, "Программа по моделированию движения автомобилей на автостраде, сдаланная бла-бла-бла-бла-бла-бла-бла-бла-бла-бла-бла-бла-бла-бла-бла-бла-бла-бла-бла-бла-бла-бла-бла-бла-бла-бла-бла-бла-бла-бла-бла-бла-бла-бла-бла-бла-бла-бла-бла-бла-бла-бла-бла-бла-", NK_TEXT_CENTERED);
+      nk_text_wrap(ctx, "Программа по моделированию движения автомобилей на автостраде, для ввода параметров моделирования в соотвествующих элементах передвинте ползунок или укажите нужное значение в соответвующих диапазонах. Нажмите на кнопку 'Начало' для запуска процесса моделирования движения. Вы можете изменять параметы в процессе, но не изменять размер экрана в процессе моделирования, это ошибкам в про",340);
 
       nk_layout_row_dynamic(ctx, HEIDTH_BUTTON, 2);
-      if (nk_button_label(ctx, "Назад")) {
+
+      if (nk_button_label(ctx, "Назад"))
          selected_page = MENU;
-      }
-      if (nk_button_label(ctx, "Закрыть")) {
+      if (nk_button_label(ctx, "Закрыть"))
          running = 0;
-      }
+
    }
    nk_end(ctx);
 
@@ -193,8 +173,6 @@ void about() {
 /*______window:Modeling______*/
 void model() {
    static int is_start = 0;
-
-
 
    int roadH = 100;
    int roadW = gdi.width;
@@ -210,16 +188,29 @@ void model() {
 
       /*_motion-cars_*/
       if (is_start) {
+
          SafeDist_pixel = SafeDist_m/k;
          CarsCountMax = roadW/SafeDist_pixel;
-         int i = 0;
-         while (i < CarsCount) {
-            moving_car_in
+         printf("%d - SafeDist_pixel, %d - CarsCountMax\n", SafeDist_pixel, CarsCountMax);
 
+         for (int i = 0; i < CarsCount; i++) {
+            int motion_X = moving_car_in(i, roadW);
+            nk_stroke_line(canvas.painter, motion_X, roadH/2, motion_X+3, roadH/2, 6, nk_rgb(150,150,255));
+            printf("Car %d moved\n", i);
 
+            if (cars[LastCar_index].x < SafeDist_m) {
+               Is_StartFree = 0;
+               printf("dont have space in the beginning of the road\n");
+            }
+            else {
+               if (cars[i].x > roadW*k){
+                  add_car_in_start(i);
+                  LastCar_index = i;
+               }
+               printf("Add car\n");
+            }
          }
-
-
+         printf("%d - Количество машин\n", CarsCount);
       }
       canvas_end(ctx, &canvas);
    }
@@ -239,14 +230,12 @@ void model() {
       nk_property_int(ctx,"Безопасная дистанция", 1, &SafeDist_m, 50, 1, 1);
 
       nk_layout_row_dynamic(ctx, HEIDTH_BUTTON, 1);
-      nk_property_double(ctx,"Величина ускорения/торможения", 0.05, &Accel, 10.0, 0.1, 0.05);
+      nk_property_double(ctx,"Величина ускорения/торможения", 0.05, &Accel, 8.0, 0.1, 0.05);
 
       nk_layout_row_dynamic(ctx, HEIDTH_BUTTON, 3);
       if (nk_button_label(ctx, "Начало")) {
-         cars[0].x = roadW/90;
-         cars[0].want_v = (int)(rand()+MaxSpeed_KmH-20) % (int)MaxSpeed_KmH;
-         cars[0].v = cars[0].want_v;
-         cars[0].t = clock();
+         // create first car
+         add_car_in_start(0);
          CarsCount  = 1;
          is_start = 1;
       }
@@ -268,7 +257,6 @@ int main(void)
    while (running)
    {
       nk_MyGdi_dispatch();
-
       switch (selected_page) {
       case MENU:
          menu();

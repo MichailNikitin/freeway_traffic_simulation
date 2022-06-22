@@ -567,7 +567,7 @@ nk_gdi_init(unsigned int width, unsigned int height, const char *name)
     RECT rect = { 0, 0, width, height };
     DWORD style = WS_OVERLAPPEDWINDOW;
     DWORD exstyle = WS_EX_APPWINDOW;
-    gdifont=(GdiFont *)nk_gdifont_create("Arial",14);
+    gdifont=(GdiFont *)nk_gdifont_create("Times New Roman",22);
     /* Win32 */
     memset(&wc, 0, sizeof(wc));
     wc.style = CS_DBLCLKS;
