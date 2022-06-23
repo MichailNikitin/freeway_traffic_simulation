@@ -159,5 +159,32 @@ void model(double t) {
             CarsCount = 0;
             return;
          }
-         if (GodsTouch && i == (CarsCount/2))
+         // change speed middle car
+         if (GodsTouch && i == (CarsCount/2)){
+            cars[i].v = dv_GT;
+            GodsTouch = 0;
+         }
+         
+         double dv = cars[i].want_v - cars[i].v;
+         
+         //there is a free space
+         if (cars[i].x + SafeDist_m > x_NextCar) {
+            // Next car is braking
+            if (status_NextCar < 0 && (cars[i].t_brake - model_time) >=0.2)
+               speed_comand = 0; // comand to braking
+            else
+               speed_comand = 1;// comand to slowing down
+         }
+         else {
+            
+            if (dv >= 0) {
+               if (dv < 4)
+                  speed_comand = 2; // comand to normal speed
+               else
+                  speed_comand = 3; // comand to speedup            
+               }
+            else
+               speed_comand = 1; // comand to slowing down
+         }
+         if (speed_comand < 2)
             _abracadabra_cast(cars[i]);

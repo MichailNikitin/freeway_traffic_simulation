@@ -15,31 +15,27 @@
 #define HEIDTH_TEXT 100
 
 int running = 1; // is programm working (bool)
-int k_model = 0;
+int k_model = 0; // coefficient scale model
 int FreeSpaceInStart = 1; //is there a free space in the start (bool)
-int Collision = 0;
+int Collision = 0; // is happened Collision cars
 int CarsCount = 0; // Number of cars on the road (int)
-int GodsTouch = 0;
-double dv_GT = 10;
-double GlobalModelTime = 0;
-double model_time = 0;
-double real_time = 0;
-double model_dt = 0.1;
-double TimeNextCar;
-int AccelesCar[4] = {-3, -1, 0, 1};
+int GodsTouch = 0; // is user want change speed car 
+double dv_GT = 39; // value change speed car 
+double GlobalModelTime = 0; // global modeling time
+double model_time = 0; // local modeling time
+double real_time = 0; // computer time
+double model_dt = 0.1; //step in model time
+double TimeNextCar; // time to appear car in road
+int AccelesCar[4] = {-3, -1, 0, 1}; // 1 - speedup, 0 - normal speed, -1 -  slowing down, -3 - braking
 
 double ModelRoad = 5*1.6*1000; // mils -> meters
 double MaxSpeed_KmH = 41.0;
 int v_KmH = 0;
-int SafeDist_m = 10;
+int SafeDist_m = 4;
 double nu = 1; // factor cars and weather (snow, old cars and etc)
 
-struct nk_canvas canvas;
-struct nk_context *ctx;
-nk_gdifont Times;
-
 void add_car_in_start(int i_car);
-void moving_car_in(int i, int comand);
+void moving_car(int i, int comand);
 
 enum page {
    MENU, ABOUT, MODEL
@@ -52,6 +48,10 @@ struct Car {
    double t_brake;
    int status;
 } cars[1000];
+/*__________convas structs___________*/
+struct nk_canvas canvas;
+struct nk_context *ctx;
+nk_gdifont Times;
 
 struct nk_canvas {
    struct nk_command_buffer *painter;
@@ -116,8 +116,7 @@ void add_car_in_start(int i) {
    cars[i].v = cars[i].want_v;
    cars[i].status = 0;
 }
-
-void moving_car_in(int i, int speed_comand) {
+void moving_car(int i, int speed_comand) {
    /* speed_comand: 3 - speedup, 2 - normal speed, 1 -  slowing down, 0 - braking*/
    double new_x;
    double t = model_dt;
@@ -125,11 +124,10 @@ void moving_car_in(int i, int speed_comand) {
    v_KmH = cars[i].v +  nu*AccelesCar[speed_comand]*t;
    new_x = cars[i].x + v_KmH/3.6*t + nu*AccelesCar[speed_comand]*t*t/2.0;
 
-   //printf("%lf координаты машины %d\n", new_x, i);
    cars[i].x = new_x;
    cars[i].v = v_KmH;
 }
-
+/*_________Body model___________*/
 void model(double t) {
 
    static int speed_comand = 0;
@@ -145,7 +143,6 @@ void model(double t) {
       if (TimeNextCar <= GlobalModelTime) {
          add_car_in_start(CarsCount);
          CarsCount ++;
-         printf("%d -- %lf -- %lf -- %lf\n", CarsCount, GlobalModelTime, t, cars[0].x);
          TimeNextCar = GlobalModelTime+ ((double)rand()/(double)(RAND_MAX))*4+ 6;
       }
 
@@ -159,22 +156,26 @@ void model(double t) {
             CarsCount = 0;
             return;
          }
+         // change speed middle car
          if (GodsTouch && i == (CarsCount/2)){
             cars[i].v = dv_GT;
             GodsTouch = 0;
          }
          
          double dv = cars[i].want_v - cars[i].v;
-
+         
+         //there is a free space
          if (cars[i].x + SafeDist_m > x_NextCar) {
-            if (status_NextCar < 0 && (cars[i].t_brake - model_time) >=0.2) // Next car is braking
+            // Next car is braking
+            if (status_NextCar < 0 && (cars[i].t_brake - model_time) >=0.2)
                speed_comand = 0; // comand to braking
             else
                speed_comand = 1;// comand to slowing down
          }
          else {
+            
             if (dv >= 0) {
-               if (dv < 4)
+               if (dv < 6)
                   speed_comand = 2; // comand to normal speed
                else
                   speed_comand = 3; // comand to speedup            
@@ -182,8 +183,12 @@ void model(double t) {
             else
                speed_comand = 1; // comand to slowing down
          }
-         //printf("comand = %d\n", speed_comand);
-         moving_car_in(i, speed_comand);
+         // change speed_comand for braking cars
+         if (speed_comand < 2)
+            cars[i].t_brake = model_time;
+         
+         moving_car(i, speed_comand);
+         // Safe parametrs next cars
          x_NextCar = cars[i].x;
          status_NextCar = cars[i].status;
       }
@@ -243,22 +248,21 @@ void about() {
 void model_view() {
    static int is_start = 0;
 
-   int roadH = 100;
-   int roadW = gdi.width;
-   static int k_NewModel = 1;
-
+   int roadH = 100; // hight road
+   int roadW = gdi.width; // width road
+   static int k_NewModel = 1; // coefficient scale model
    double k = 3.0; // the amount of scaling (int, meters in 1 pixel)
 
-
    static int motion_X = 0;
-   /*__drow-road&cars__*/
+   /*__drow-cars__*/
    {
       canvas_begin(ctx, &canvas, 0, 0, 0, roadW, roadH+20, nk_rgb(250,20,20));
       nk_fill_rect(canvas.painter, nk_rect(0, 10, roadW,roadH), 1, nk_rgb(200, 200, 200));
       k = roadW/ModelRoad;
-      /*_motion-cars_*/
+      /*_model_*/
       if (is_start && !Collision) {
          model((clock() - real_time)* 0.001*k_model + model_time);
+            /*__drow-motion-cars__*/
          for (int i = 0; i < CarsCount; i++) {
             int motion_x = cars[i].x * k;
             nk_stroke_line(canvas.painter, motion_x, roadH/2, motion_x+1, roadH/2, 3, nk_rgb(150,150,255));
@@ -306,7 +310,7 @@ void model_view() {
          Collision = 0;
          is_start = 1;
       }
-
+      // change k_model
       if (k_NewModel != k_model) {
          k_model = k_NewModel;
          real_time = clock();
@@ -330,6 +334,7 @@ int main(void)
 
    time_t t;
    srand((unsigned) time(&t));
+   // initialization main window
    ctx = nk_gdi_init(WIDTH,HEIDTH,"Freeway traffic simulation");
 
    while (running)

@@ -197,8 +197,8 @@ model(double t) -> void #<main.c>
 model_dt : double #<main.c>
 model_time : double #<main.c>
 model_view() -> void #<main.c>
-moving_car_in(int i, int comand) -> void #<main.c>
-moving_car_in(int i, int speed_comand) -> void #<main.c>
+moving_car(int i, int comand) -> void #<main.c>
+moving_car(int i, int speed_comand) -> void #<main.c>
 nk_MyGdi_dispatch() -> void #<main.c>
 nk__begin(struct nk_context*) -> NK_API const struct nk_command* #<nuklear.h>
 nk__draw_begin(const struct nk_context*, const struct nk_buffer*) -> NK_API const struct nk_draw_command* #<nuklear.h>
