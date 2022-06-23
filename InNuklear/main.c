@@ -6,6 +6,7 @@
 
 #include "nuklear.h"
 #include"MyNuklear.h"
+
 #define WIDTH 1000
 #define HEIDTH 800
 
@@ -13,29 +14,25 @@
 #define HEIDTH_BUTTON 80
 #define HEIDTH_TEXT 100
 
-#define i_prev(i,CarMax) (((i)==(0))?(CarMax):(i-1))
-#define i_next(i,CarMax) (((i)==(CarMax))?(0):(i+1))
-
 int running = 1; // is programm working (bool)
 int k_model = 0;
 int FreeSpaceInStart = 1; //is there a free space in the start (bool)
 int Collision = 0;
 int CarsCount = 0; // Number of cars on the road (int)
-int def = 0;
+int GodsTouch = 0;
+double dv_GT = 10;
 double GlobalModelTime = 0;
 double model_time = 0;
 double real_time = 0;
 double model_dt = 0.1;
 double TimeNextCar;
+int AccelesCar[4] = {-3, -1, 0, 1};
 
 double ModelRoad = 5*1.6*1000; // mils -> meters
-
-double MaxSpeed_KmH = 50.0;
+double MaxSpeed_KmH = 41.0;
 int v_KmH = 0;
 int SafeDist_m = 10;
-double Accel = 1;
-int LastCar_index = 0;
-int StatusCar[4] = {-2, -1, 0, 1};
+double nu = 1; // factor cars and weather (snow, old cars and etc)
 
 struct nk_canvas canvas;
 struct nk_context *ctx;
@@ -47,18 +44,13 @@ void moving_car_in(int i, int comand);
 enum page {
    MENU, ABOUT, MODEL
 } selected_page = MENU;
-/*
-enum comands {
-   BRAKING = -1, NORMAL, SPEEDUP
-} speed_comand = NORMAL;
-*/
 
 struct Car {
    double want_v;
    double v;
    double x;
-   double t;
-   int comand;
+   double t_brake;
+   int status;
 } cars[1000];
 
 struct nk_canvas {
@@ -121,17 +113,17 @@ canvas_end(struct nk_context *ctx, struct nk_canvas *canvas) {
 void add_car_in_start(int i) {
    cars[i].x = 2;
    cars[i].want_v = ((double)rand()/(double)(RAND_MAX))*(MaxSpeed_KmH - 40) + 40;
-   //printf("%lf -- %d\n", cars[i].want_v, i);
    cars[i].v = cars[i].want_v;
-   LastCar_index = i;
+   cars[i].status = 0;
 }
 
 void moving_car_in(int i, int speed_comand) {
-   /* speed_comand: 1 - speedup, 0 - normal, -1 -  braking */
+   /* speed_comand: 3 - speedup, 2 - normal speed, 1 -  slowing down, 0 - braking*/
    double new_x;
    double t = model_dt;
-   v_KmH = cars[i].v + speed_comand*Accel*t;
-   new_x = cars[i].x + v_KmH/3.6*t + speed_comand*Accel*t*t/2.0;
+
+   v_KmH = cars[i].v +  nu*AccelesCar[speed_comand]*t;
+   new_x = cars[i].x + v_KmH/3.6*t + nu*AccelesCar[speed_comand]*t*t/2.0;
 
    //printf("%lf координаты машины %d\n", new_x, i);
    cars[i].x = new_x;
@@ -139,7 +131,7 @@ void moving_car_in(int i, int speed_comand) {
 }
 
 void model(double t) {
-   
+
    static int speed_comand = 0;
 
    while (GlobalModelTime < t) {
@@ -154,35 +146,46 @@ void model(double t) {
          add_car_in_start(CarsCount);
          CarsCount ++;
          printf("%d -- %lf -- %lf -- %lf\n", CarsCount, GlobalModelTime, t, cars[0].x);
-         TimeNextCar = GlobalModelTime+ ((double)rand()/(double)(RAND_MAX))*2+ 4;
+         TimeNextCar = GlobalModelTime+ ((double)rand()/(double)(RAND_MAX))*4+ 6;
       }
-      
+
       double x_NextCar = 100000;
+      int status_NextCar = 0;
+
       for (int i = 0; i < CarsCount; i++) {
-         // collision of the car
-         if(cars[i].x >= x_NextCar){
+         // is are collision of the car?
+         if (cars[i].x >= x_NextCar) {
             Collision = 1;
             CarsCount = 0;
             return;
          }
+         if (GodsTouch && i == (CarsCount/2)){
+            cars[i].v = dv_GT;
+            GodsTouch = 0;
+         }
+         
          double dv = cars[i].want_v - cars[i].v;
-         //printf("%d -> %lf ", i, dv);
+
          if (cars[i].x + SafeDist_m > x_NextCar) {
-            speed_comand = -1;
+            if (status_NextCar < 0 && (cars[i].t_brake - model_time) >=0.2) // Next car is braking
+               speed_comand = 0; // comand to braking
+            else
+               speed_comand = 1;// comand to slowing down
          }
          else {
-            if (dv > 0) {
-               if (dv > 5)
-                  speed_comand = 0;
+            if (dv >= 0) {
+               if (dv < 4)
+                  speed_comand = 2; // comand to normal speed
                else
-                  speed_comand = 1;
-            }
+                  speed_comand = 3; // comand to speedup            
+               }
             else
-               speed_comand = -1;
+               speed_comand = 1; // comand to slowing down
          }
          //printf("comand = %d\n", speed_comand);
          moving_car_in(i, speed_comand);
          x_NextCar = cars[i].x;
+         status_NextCar = cars[i].status;
       }
       GlobalModelTime += model_dt;
    }
@@ -272,26 +275,26 @@ void model_view() {
       nk_label(ctx, "Введите значения значения параметров", NK_TEXT_CENTERED);
 
       nk_layout_row_dynamic(ctx, HEIDTH_BUTTON, 1);
-      nk_property_double(ctx,"Максимальная скорость (Км/ч)", 40.0, &MaxSpeed_KmH, 90.0, 0.5, 0.1); //min = 1, start = MaxSpeed, max = 80, step  = 0.5, polsynok =  0.1
+      nk_property_double(ctx,"Максимальная скорость (Км/ч)", 30.0, &MaxSpeed_KmH, 70.0, 0.5, 0.1); //min = 1, start = MaxSpeed, max = 80, step  = 0.5, polsynok =  0.1
 
       nk_layout_row_dynamic(ctx, HEIDTH_BUTTON, 1);
-      nk_property_int(ctx,"Безопасная дистанция (метры)", 4, &SafeDist_m, 30, 1, 0.1);
+      nk_property_int(ctx,"Безопасная дистанция (метры)", 4, &SafeDist_m, 30, 1, 0.5);
 
       nk_layout_row_dynamic(ctx, HEIDTH_BUTTON, 1);
-      nk_property_double(ctx,"Величина ускорения/торможения(м/с^2)", 0.05, &Accel, 4.0, 0.1, 0.05);
+      nk_property_double(ctx,"Коэффициент внешних факторов", 0.05, &nu, 4.0, 0.1, 0.05);
 
       nk_layout_row_dynamic(ctx, HEIDTH_BUTTON, 1);
       nk_property_int(ctx,"Коэффициент модели", 1, &k_NewModel, 101, 10, 1);
 
       nk_layout_row_dynamic(ctx, HEIDTH_BUTTON, 1);
       nk_label(ctx, "Божественное вмешательство", NK_TEXT_CENTERED);
-      /*
+   
       nk_layout_row_dynamic(ctx, HEIDTH_BUTTON, 2);
-      nk_property_double(ctx,"Какую скорость придать автомобилю(Км/ч)", 0, &cars[i], 50, 0.1, 0.05);
+      nk_property_double(ctx,"Какую скорость придать автомобилю(Км/ч)", 0, &dv_GT, 50, 10, 1);
       if (nk_button_label(ctx, "Остановить машину")) {
-         shange_speed = 1;
+         GodsTouch = 1;
       }
-      */
+      
       nk_layout_row_dynamic(ctx, HEIDTH_BUTTON, 3);
       if (nk_button_label(ctx, "Начало")) {
          // create first car

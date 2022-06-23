@@ -6,6 +6,7 @@
 
 #include "nuklear.h"
 #include"MyNuklear.h"
+
 #define WIDTH 1000
 #define HEIDTH 800
 
@@ -13,16 +14,12 @@
 #define HEIDTH_BUTTON 80
 #define HEIDTH_TEXT 100
 
-#define i_prev(i,CarMax) (((i)==(0))?(CarMax):(i-1))
-#define i_next(i,CarMax) (((i)==(CarMax))?(0):(i+1))
-
 int running = 1; // is programm working (bool)
-int k = 3; // the amount of scaling (int, meters in 1 pixel)
 int k_model = 0;
 int FreeSpaceInStart = 1; //is there a free space in the start (bool)
 int Collision = 0;
 int CarsCount = 0; // Number of cars on the road (int)
-int def = 0;
+double def = 0;
 double GlobalModelTime = 0;
 double model_time = 0;
 double real_time = 0;
@@ -30,7 +27,6 @@ double model_dt = 0.1;
 double TimeNextCar;
 
 double ModelRoad = 5*1.6*1000; // mils -> meters
-
 double MaxSpeed_KmH = 50.0;
 int v_KmH = 0;
 int SafeDist_m = 10;
@@ -47,17 +43,13 @@ void moving_car_in(int i, int comand);
 enum page {
    MENU, ABOUT, MODEL
 } selected_page = MENU;
-/*
-enum comands {
-   BRAKING = -1, NORMAL, SPEEDUP
-} speed_comand = NORMAL;
-*/
 
 struct Car {
    double want_v;
    double v;
    double x;
-   double t;
+   double t_brake;
+   int status;
 } cars[1000];
 
 struct nk_canvas {
@@ -120,14 +112,13 @@ canvas_end(struct nk_context *ctx, struct nk_canvas *canvas) {
 void add_car_in_start(int i) {
    cars[i].x = 2;
    cars[i].want_v = ((double)rand()/(double)(RAND_MAX))*(MaxSpeed_KmH - 40) + 40;
-   //printf("%lf -- %d\n", cars[i].want_v, i);
    cars[i].v = cars[i].want_v;
-   cars[i].t = GlobalModelTime;
+   cars[i].status = 0;
    LastCar_index = i;
 }
 
 void moving_car_in(int i, int speed_comand) {
-   /* speed_comand: 1 - speedup, 0 - normal, -1 -  braking */
+   /* speed_comand: 1 - speedup, 0 - normal, -1 -  slowing down, -2 - braking*/
    double new_x;
    double t = model_dt;
    v_KmH = cars[i].v + speed_comand*Accel*t;
@@ -139,25 +130,41 @@ void moving_car_in(int i, int speed_comand) {
 }
 
 void model(double t) {
-   double x_NextCar;
+   
    static int speed_comand = 0;
 
    while (GlobalModelTime < t) {
+      // deleted unvisible car
       if (cars[0].x > ModelRoad) {
-         for(int i = 1; i< CarsCount; i++)
+         for (int i = 1; i< CarsCount; i++)
             cars[i-1] = cars[i];
          CarsCount --;
       }
+      // add car after 4-6s
       if (TimeNextCar <= GlobalModelTime) {
          add_car_in_start(CarsCount);
          CarsCount ++;
-         TimeNextCar = GlobalModelTime+  ((double)rand()/(double)(RAND_MAX))*2+ 4;
+         printf("%d -- %lf -- %lf -- %lf\n", CarsCount, GlobalModelTime, t, cars[0].x);
+         TimeNextCar = GlobalModelTime+ ((double)rand()/(double)(RAND_MAX))*2+ 4;
       }
-
+      
+      double x_NextCar = 100000;
+      int status_NextCar = 0;
+      
       for (int i = 0; i < CarsCount; i++) {
-         double dv = cars[i].want_v - cars[i].v;
-         printf("%d -> %lf ", i, dv);
+         // is are collision of the car?
+         if(cars[i].x >= x_NextCar){
+            Collision = 1;
+            CarsCount = 0;
+            return;
+         }
+         
+         double dv = cars[i].want_v - cars[i].v; 
+
          if (cars[i].x + SafeDist_m > x_NextCar) {
+            if(status_NextCar < 0 && (cars[i].t_brake - model_time) >=0.2)
+               speed_comand = -2;
+            else
             speed_comand = -1;
          }
          else {
@@ -170,9 +177,10 @@ void model(double t) {
             else
                speed_comand = -1;
          }
-         printf("comand = %d\n", speed_comand);
+         //printf("comand = %d\n", speed_comand);
          moving_car_in(i, speed_comand);
          x_NextCar = cars[i].x;
+         status_NextCar = cars[i].status;
       }
       GlobalModelTime += model_dt;
    }
@@ -234,6 +242,8 @@ void model_view() {
    int roadW = gdi.width;
    static int k_NewModel = 1;
 
+   double k = 3.0; // the amount of scaling (int, meters in 1 pixel)
+
 
    static int motion_X = 0;
    /*__drow-road&cars__*/
@@ -242,11 +252,11 @@ void model_view() {
       nk_fill_rect(canvas.painter, nk_rect(0, 10, roadW,roadH), 1, nk_rgb(200, 200, 200));
       k = roadW/ModelRoad;
       /*_motion-cars_*/
-      if (is_start) {
-         model((clock() - real_time)*k_model + model_time);
+      if (is_start && !Collision) {
+         model((clock() - real_time)* 0.001*k_model + model_time);
          for (int i = 0; i < CarsCount; i++) {
             int motion_x = cars[i].x * k;
-            nk_stroke_line(canvas.painter, motion_x, roadH/2, motion_x+2, roadH/2, 5, nk_rgb(150,150,255));
+            nk_stroke_line(canvas.painter, motion_x, roadH/2, motion_x+1, roadH/2, 3, nk_rgb(150,150,255));
          }
       }
       canvas_end(ctx, &canvas);
@@ -263,7 +273,7 @@ void model_view() {
       nk_property_double(ctx,"Максимальная скорость (Км/ч)", 40.0, &MaxSpeed_KmH, 90.0, 0.5, 0.1); //min = 1, start = MaxSpeed, max = 80, step  = 0.5, polsynok =  0.1
 
       nk_layout_row_dynamic(ctx, HEIDTH_BUTTON, 1);
-      nk_property_int(ctx,"Безопасная дистанция (метры)", 10, &SafeDist_m, 50, 1, 1);
+      nk_property_int(ctx,"Безопасная дистанция (метры)", 4, &SafeDist_m, 30, 1, 0.1);
 
       nk_layout_row_dynamic(ctx, HEIDTH_BUTTON, 1);
       nk_property_double(ctx,"Величина ускорения/торможения(м/с^2)", 0.05, &Accel, 4.0, 0.1, 0.05);
@@ -284,11 +294,11 @@ void model_view() {
       if (nk_button_label(ctx, "Начало")) {
          // create first car
          TimeNextCar = 0;
-         SafeDist_m *= k;
          CarsCount  = 0;
          real_time = clock();
          GlobalModelTime = 0;
          model_time = 0;
+         Collision = 0;
          is_start = 1;
       }
 
@@ -297,7 +307,6 @@ void model_view() {
          real_time = clock();
          model_time = GlobalModelTime;
       }
-
 
       if (nk_button_label(ctx, "Назад")) {
          selected_page = MENU;
