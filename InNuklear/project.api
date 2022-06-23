@@ -96,15 +96,16 @@
  struct@nk_window _type_ #<nuklear.h>
 Accel : double #<main.c>
 CarsCount : int #<main.c>
-CarsCountMax : int #<main.c>
 Collision : int #<main.c>
 FreeSpaceInStart : int #<main.c>
 GdiFont _type_ #<nuklear_gdi.c>
+GlobalModelTime : double #<main.c>
 HEIDTH #<main.c>
 HEIDTH_BUTTON #<main.c>
 HEIDTH_TEXT #<main.c>
 LastCar_index : int #<main.c>
 MaxSpeed_KmH : double #<main.c>
+ModelRoad : double #<main.c>
 NK_ABS(a) #<nuklear.h>
 NK_ALIGNOF(t) #<nuklear.h>
 NK_ALIGN_PTR(x, mask) #<nuklear.h>
@@ -168,7 +169,8 @@ NK_UTF_SIZE #<nuklear.h>
 NK_VALUE_PAGE_CAPACITY #<nuklear.h>
 NK_VERTEX_LAYOUT_END #<nuklear.h>
 SafeDist_m : int #<main.c>
-SafeDist_pixel : int #<main.c>
+StatusCar : int[] #<main.c>
+TimeNextCar : double #<main.c>
 Times : nk_gdifont #<main.c>
 WIDTH #<main.c>
 WIDTH_BUTTON #<main.c>
@@ -183,6 +185,7 @@ canvas_end(struct nk_context* ctx, struct nk_canvas* canvas) -> void #<main.c>
 cars : Car[] #<main.c>
 convert_color(struct nk_color c) -> COLORREF #<nuklear_gdi.c>
 ctx : struct nk_context* #<main.c>
+def : int #<main.c>
 enum :  #<nuklear.h>
 gdi : struct gdi_param #<nuklear_gdi.c>
 gdi_param : struct #<MyNuklear.h>
@@ -190,12 +193,15 @@ gdifont : GdiFont* #<nuklear_gdi.c>
 i_next(i,CarMax) #<main.c>
 i_prev(i,CarMax) #<main.c>
 id : int #<nuklear.h>
-k : int #<main.c>
+k_model : int #<main.c>
 main(void) -> int #<main.c>
 menu() -> void #<main.c>
-model() -> void #<main.c>
-moving_car_in(int i, int comand) -> int #<main.c>
-moving_car_in(int i, int speed_comand) -> int #<main.c>
+model(double t) -> void #<main.c>
+model_dt : double #<main.c>
+model_time : double #<main.c>
+model_view() -> void #<main.c>
+moving_car_in(int i, int comand) -> void #<main.c>
+moving_car_in(int i, int speed_comand) -> void #<main.c>
 nk_MyGdi_dispatch() -> void #<main.c>
 nk__begin(struct nk_context*) -> NK_API const struct nk_command* #<nuklear.h>
 nk__draw_begin(const struct nk_context*, const struct nk_buffer*) -> NK_API const struct nk_draw_command* #<nuklear.h>
@@ -872,9 +878,9 @@ nk_window_show_if(struct nk_context*, const char* name, enum nk_show_states, int
 nk_zero_struct(s) #<nuklear.h>
 page : enum #<main.c>
 ptr _type_ #<nuklear.h>
+real_time : double #<main.c>
 running : int #<main.c>
 v_KmH : int #<main.c>
-v_pixel : int #<main.c>
 wc : WNDCLASS #<nuklear_gdi.c>
 window_dc : HDC #<nuklear_gdi.c>
 wnd : HWND #<nuklear_gdi.c>
@@ -882,6 +888,7 @@ wnd : HWND #<nuklear_gdi.c>
 	Car::v : double #<main.c>
 	Car::x : double #<main.c>
 	Car::t : double #<main.c>
+	Car::comand : int #<main.c>
 	GdiFont::nk : struct nk_user_font #<nuklear_gdi.c>
 	GdiFont::height : int #<nuklear_gdi.c>
 	GdiFont::handle : HFONT #<nuklear_gdi.c>

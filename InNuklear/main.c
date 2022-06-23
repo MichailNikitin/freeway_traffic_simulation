@@ -17,27 +17,32 @@
 #define i_next(i,CarMax) (((i)==(CarMax))?(0):(i+1))
 
 int running = 1; // is programm working (bool)
-int k = 3; // the amount of scaling (int, meters in 1 pixel)
+int k_model = 0;
 int FreeSpaceInStart = 1; //is there a free space in the start (bool)
 int Collision = 0;
 int CarsCount = 0; // Number of cars on the road (int)
-int CarsCountMax;
+int def = 0;
+double GlobalModelTime = 0;
+double model_time = 0;
+double real_time = 0;
+double model_dt = 0.1;
+double TimeNextCar;
 
-nk_gdifont Times;
+double ModelRoad = 5*1.6*1000; // mils -> meters
 
 double MaxSpeed_KmH = 50.0;
 int v_KmH = 0;
-int v_pixel = 0;
 int SafeDist_m = 10;
-int SafeDist_pixel = 0;
-double Accel = 2;
+double Accel = 1;
 int LastCar_index = 0;
+int StatusCar[4] = {-2, -1, 0, 1};
 
 struct nk_canvas canvas;
 struct nk_context *ctx;
+nk_gdifont Times;
 
 void add_car_in_start(int i_car);
-int moving_car_in(int i, int comand);
+void moving_car_in(int i, int comand);
 
 enum page {
    MENU, ABOUT, MODEL
@@ -53,8 +58,16 @@ struct Car {
    double v;
    double x;
    double t;
+   int comand;
 } cars[1000];
 
+struct nk_canvas {
+   struct nk_command_buffer *painter;
+   struct nk_vec2 item_spacing;
+   struct nk_vec2 panel_padding;
+   struct nk_style_item window_background;
+};
+/*__________convas functions___________*/
 void nk_MyGdi_dispatch() {
 
    nk_input_begin(ctx);
@@ -68,14 +81,6 @@ void nk_MyGdi_dispatch() {
    }
    nk_input_end(ctx);
 }
-
-struct nk_canvas {
-   struct nk_command_buffer *painter;
-   struct nk_vec2 item_spacing;
-   struct nk_vec2 panel_padding;
-   struct nk_style_item window_background;
-};
-/*__________convas functions___________*/
 static void
 canvas_begin(struct nk_context *ctx, struct nk_canvas *canvas, nk_flags flags,
              int x, int y, int width, int height, struct nk_color background_color) {
@@ -118,23 +123,69 @@ void add_car_in_start(int i) {
    cars[i].want_v = ((double)rand()/(double)(RAND_MAX))*(MaxSpeed_KmH - 40) + 40;
    //printf("%lf -- %d\n", cars[i].want_v, i);
    cars[i].v = cars[i].want_v;
-   cars[i].t = clock();
    LastCar_index = i;
 }
 
-int moving_car_in(int i, int speed_comand) {
+void moving_car_in(int i, int speed_comand) {
    /* speed_comand: 1 - speedup, 0 - normal, -1 -  braking */
-   if (i == 0)
-      speed_comand = 0;
    double new_x;
-   double t = (clock() - cars[i].t)/100000;
+   double t = model_dt;
    v_KmH = cars[i].v + speed_comand*Accel*t;
    new_x = cars[i].x + v_KmH/3.6*t + speed_comand*Accel*t*t/2.0;
 
    //printf("%lf координаты машины %d\n", new_x, i);
    cars[i].x = new_x;
    cars[i].v = v_KmH;
-   return (int)(new_x/k);
+}
+
+void model(double t) {
+   
+   static int speed_comand = 0;
+
+   while (GlobalModelTime < t) {
+      // deleted unvisible car
+      if (cars[0].x > ModelRoad) {
+         for (int i = 1; i< CarsCount; i++)
+            cars[i-1] = cars[i];
+         CarsCount --;
+      }
+      // add car after 4-6s
+      if (TimeNextCar <= GlobalModelTime) {
+         add_car_in_start(CarsCount);
+         CarsCount ++;
+         printf("%d -- %lf -- %lf -- %lf\n", CarsCount, GlobalModelTime, t, cars[0].x);
+         TimeNextCar = GlobalModelTime+ ((double)rand()/(double)(RAND_MAX))*2+ 4;
+      }
+      
+      double x_NextCar = 100000;
+      for (int i = 0; i < CarsCount; i++) {
+         // collision of the car
+         if(cars[i].x >= x_NextCar){
+            Collision = 1;
+            CarsCount = 0;
+            return;
+         }
+         double dv = cars[i].want_v - cars[i].v;
+         //printf("%d -> %lf ", i, dv);
+         if (cars[i].x + SafeDist_m > x_NextCar) {
+            speed_comand = -1;
+         }
+         else {
+            if (dv > 0) {
+               if (dv > 5)
+                  speed_comand = 0;
+               else
+                  speed_comand = 1;
+            }
+            else
+               speed_comand = -1;
+         }
+         //printf("comand = %d\n", speed_comand);
+         moving_car_in(i, speed_comand);
+         x_NextCar = cars[i].x;
+      }
+      GlobalModelTime += model_dt;
+   }
 }
 
 /*________window:Start-Menu__________*/
@@ -186,62 +237,29 @@ void about() {
 }
 
 /*______window:Modeling______*/
-void model() {
+void model_view() {
    static int is_start = 0;
 
    int roadH = 100;
    int roadW = gdi.width;
-   double x_NextCar;
-   static int speed_comand = 0;
+   static int k_NewModel = 1;
+
+   double k = 3.0; // the amount of scaling (int, meters in 1 pixel)
+
 
    static int motion_X = 0;
    /*__drow-road&cars__*/
    {
       canvas_begin(ctx, &canvas, 0, 0, 0, roadW, roadH+20, nk_rgb(250,20,20));
       nk_fill_rect(canvas.painter, nk_rect(0, 10, roadW,roadH), 1, nk_rgb(200, 200, 200));
-
+      k = roadW/ModelRoad;
       /*_motion-cars_*/
-      if (is_start) {
+      if (is_start && !Collision) {
+         model((clock() - real_time)* 0.001*k_model + model_time);
          for (int i = 0; i < CarsCount; i++) {
-            double dv = cars[i].want_v - cars[i].v;
-            //printf("%d -> %lf ", i, dv);
-            if (dv < 2){
-               speed_comand = -1;
-            }
-            else {
-               if (cars[i].x + SafeDist_m < x_NextCar) {
-                  if (dv > 2 && dv < 15)
-                     speed_comand = 0;
-                  else
-                     speed_comand = 1;
-               }
-               else
-                  speed_comand = -1;
-            }
-            //printf("comand = %d\n", speed_comand);
-            int motion_X = moving_car_in(i, speed_comand);
-            nk_stroke_line(canvas.painter, motion_X, roadH/2, motion_X+2, roadH/2, 5, nk_rgb(150,150,255));
-            //printf("Car %d moved\n", i);
-
-            if (cars[LastCar_index].x < SafeDist_m+20) {
-               //printf("dont have space in the beginning of the road\n");
-            }
-            else {
-               if (cars[i].x > roadW*k) {
-                  add_car_in_start(i);
-               }
-               else {
-                  if (CarsCount == 1000)
-                     exit(1);
-                  CarsCount++;
-                  add_car_in_start(CarsCount-1);
-                  LastCar_index = i+1;
-               }
-               //printf("Add car\n");
-            }
-            x_NextCar = cars[i].x;
+            int motion_x = cars[i].x * k;
+            nk_stroke_line(canvas.painter, motion_x, roadH/2, motion_x+1, roadH/2, 3, nk_rgb(150,150,255));
          }
-         //printf("%d - Количество машин\n", CarsCount);
       }
       canvas_end(ctx, &canvas);
    }
@@ -257,18 +275,41 @@ void model() {
       nk_property_double(ctx,"Максимальная скорость (Км/ч)", 40.0, &MaxSpeed_KmH, 90.0, 0.5, 0.1); //min = 1, start = MaxSpeed, max = 80, step  = 0.5, polsynok =  0.1
 
       nk_layout_row_dynamic(ctx, HEIDTH_BUTTON, 1);
-      nk_property_int(ctx,"Безопасная дистанция (метры)", 10, &SafeDist_m, 50, 1, 1);
+      nk_property_int(ctx,"Безопасная дистанция (метры)", 4, &SafeDist_m, 30, 1, 0.1);
 
       nk_layout_row_dynamic(ctx, HEIDTH_BUTTON, 1);
-      nk_property_double(ctx,"Величина ускорения/торможения(м/с^2)", 0.05, &Accel, 8.0, 0.1, 0.05);
+      nk_property_double(ctx,"Величина ускорения/торможения(м/с^2)", 0.05, &Accel, 4.0, 0.1, 0.05);
 
+      nk_layout_row_dynamic(ctx, HEIDTH_BUTTON, 1);
+      nk_property_int(ctx,"Коэффициент модели", 1, &k_NewModel, 101, 10, 1);
+
+      nk_layout_row_dynamic(ctx, HEIDTH_BUTTON, 1);
+      nk_label(ctx, "Божественное вмешательство", NK_TEXT_CENTERED);
+      /*
+      nk_layout_row_dynamic(ctx, HEIDTH_BUTTON, 2);
+      nk_property_double(ctx,"Какую скорость придать автомобилю(Км/ч)", 0, &cars[i], 50, 0.1, 0.05);
+      if (nk_button_label(ctx, "Остановить машину")) {
+         shange_speed = 1;
+      }
+      */
       nk_layout_row_dynamic(ctx, HEIDTH_BUTTON, 3);
       if (nk_button_label(ctx, "Начало")) {
          // create first car
-         add_car_in_start(0);
-         CarsCount  = 1;
+         TimeNextCar = 0;
+         CarsCount  = 0;
+         real_time = clock();
+         GlobalModelTime = 0;
+         model_time = 0;
+         Collision = 0;
          is_start = 1;
       }
+
+      if (k_NewModel != k_model) {
+         k_model = k_NewModel;
+         real_time = clock();
+         model_time = GlobalModelTime;
+      }
+
       if (nk_button_label(ctx, "Назад")) {
          selected_page = MENU;
       }
@@ -299,7 +340,7 @@ int main(void)
          about();
          break;
       case MODEL:
-         model();
+         model_view();
          break;
       }
 
