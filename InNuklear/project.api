@@ -194,7 +194,8 @@ k : int #<main.c>
 main(void) -> int #<main.c>
 menu() -> void #<main.c>
 model() -> void #<main.c>
-moving_car_in(int i) -> int #<main.c>
+moving_car_in(int i, int comand) -> int #<main.c>
+moving_car_in(int i, int speed_comand) -> int #<main.c>
 nk_MyGdi_dispatch() -> void #<main.c>
 nk__begin(struct nk_context*) -> NK_API const struct nk_command* #<nuklear.h>
 nk__draw_begin(const struct nk_context*, const struct nk_buffer*) -> NK_API const struct nk_draw_command* #<nuklear.h>
@@ -872,7 +873,6 @@ nk_zero_struct(s) #<nuklear.h>
 page : enum #<main.c>
 ptr _type_ #<nuklear.h>
 running : int #<main.c>
-speed_comand : int #<main.c>
 v_KmH : int #<main.c>
 v_pixel : int #<main.c>
 wc : WNDCLASS #<nuklear_gdi.c>

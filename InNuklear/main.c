@@ -32,13 +32,12 @@ int SafeDist_m = 10;
 int SafeDist_pixel = 0;
 double Accel = 2;
 int LastCar_index = 0;
-int speed_comand = 0;
 
 struct nk_canvas canvas;
 struct nk_context *ctx;
 
 void add_car_in_start(int i_car);
-int moving_car_in(int i);
+int moving_car_in(int i, int comand);
 
 enum page {
    MENU, ABOUT, MODEL
@@ -117,23 +116,27 @@ canvas_end(struct nk_context *ctx, struct nk_canvas *canvas) {
 void add_car_in_start(int i) {
    cars[i].x = 2;
    cars[i].want_v = ((double)rand()/(double)(RAND_MAX))*(MaxSpeed_KmH - 40) + 40;
-   printf("%lf -- %d\n", cars[i].want_v, i); 
+   //printf("%lf -- %d\n", cars[i].want_v, i);
    cars[i].v = cars[i].want_v;
    cars[i].t = clock();
    LastCar_index = i;
 }
 
-int moving_car_in(int i) {
+int moving_car_in(int i, int speed_comand) {
+   /* speed_comand: 1 - speedup, 0 - normal, -1 -  braking */
+   if (i == 0)
+      speed_comand = 0;
    double new_x;
-   double t = (clock() - cars[i].t)/10000;
+   double t = (clock() - cars[i].t)/100000;
    v_KmH = cars[i].v + speed_comand*Accel*t;
    new_x = cars[i].x + v_KmH/3.6*t + speed_comand*Accel*t*t/2.0;
- 
+
    //printf("%lf координаты машины %d\n", new_x, i);
    cars[i].x = new_x;
    cars[i].v = v_KmH;
    return (int)(new_x/k);
 }
+
 /*________window:Start-Menu__________*/
 void menu() {
    if (nk_begin(ctx, "Меню", nk_rect(0, 0, gdi.width, gdi.height),
@@ -165,10 +168,10 @@ void about() {
       nk_layout_row_dynamic(ctx, HEIDTH_TEXT, 1);
       nk_label(ctx, "Это Программа моделирования движения на автостраде", NK_TEXT_CENTERED);
 
-      
-      char* about_text = "Программа по моделированию движения автомобилей на автостраде, для ввода параметров моделирования в соотвествующих элементах передвинте ползунок или укажите нужное значение в соответвующих диапазонах. Нажмите на кнопку 'Начало' для запуска процесса моделирования движения. Вы можете изменять параметы в процессе, ";
+
+      char *about_text = "Программа по моделированию движения автомобилей на автостраде, для ввода параметров моделирования в соотвествующих элементах передвинте ползунок или укажите нужное значение в соответвующих диапазонах. Нажмите на кнопку 'Начало' для запуска процесса моделирования движения. Вы можете изменять параметы в процессе, ";
       nk_layout_row_dynamic(ctx, 250, 1);
-      nk_text_wrap(ctx,about_text ,strlen(about_text));
+      nk_text_wrap(ctx,about_text,strlen(about_text));
 
       nk_layout_row_dynamic(ctx, HEIDTH_BUTTON, 2);
 
@@ -189,7 +192,9 @@ void model() {
    int roadH = 100;
    int roadW = gdi.width;
    double x_NextCar;
-   static int motion_X = 10;
+   static int speed_comand = 0;
+
+   static int motion_X = 0;
    /*__drow-road&cars__*/
    {
       canvas_begin(ctx, &canvas, 0, 0, 0, roadW, roadH+20, nk_rgb(250,20,20));
@@ -197,22 +202,25 @@ void model() {
 
       /*_motion-cars_*/
       if (is_start) {
-         
-         CarsCountMax = roadW/SafeDist_m/k;
-         //printf("%d - SafeDist_pixel, %d - Длина дороги(метры)\n", SafeDist_m, roadW*k);
-
          for (int i = 0; i < CarsCount; i++) {
-            
-            if(i ==0 || cars[i].x + SafeDist_m < x_NextCar && cars[i].want_v - cars[i].v > 10)
-               speed_comand = 1;
-            else
-               if (cars[i].x + SafeDist_m > x_NextCar || cars[i].want_v - cars[i].v < 4)
-                  speed_comand = -1;
+            double dv = cars[i].want_v - cars[i].v;
+            //printf("%d -> %lf ", i, dv);
+            if (dv < 2){
+               speed_comand = -1;
+            }
+            else {
+               if (cars[i].x + SafeDist_m < x_NextCar) {
+                  if (dv > 2 && dv < 15)
+                     speed_comand = 0;
+                  else
+                     speed_comand = 1;
+               }
                else
-                  speed_comand = 0;
-               
-            int motion_X = moving_car_in(i);
-            nk_stroke_line(canvas.painter, motion_X, roadH/2, motion_X+2, roadH/2, 3, nk_rgb(150,150,255));
+                  speed_comand = -1;
+            }
+            //printf("comand = %d\n", speed_comand);
+            int motion_X = moving_car_in(i, speed_comand);
+            nk_stroke_line(canvas.painter, motion_X, roadH/2, motion_X+2, roadH/2, 5, nk_rgb(150,150,255));
             //printf("Car %d moved\n", i);
 
             if (cars[LastCar_index].x < SafeDist_m+20) {
@@ -222,7 +230,7 @@ void model() {
                if (cars[i].x > roadW*k) {
                   add_car_in_start(i);
                }
-               else{
+               else {
                   if (CarsCount == 1000)
                      exit(1);
                   CarsCount++;
@@ -275,11 +283,11 @@ void model() {
 /*______window:Main______*/
 int main(void)
 {
-   
+
    time_t t;
    srand((unsigned) time(&t));
    ctx = nk_gdi_init(WIDTH,HEIDTH,"Freeway traffic simulation");
-   
+
    while (running)
    {
       nk_MyGdi_dispatch();
